@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { extractTextFromBuffer, chunkText } from "../services/pdfService.js";
 
 export const uploadDocument = async (
      req: Request,
@@ -10,23 +11,28 @@ export const uploadDocument = async (
                return;
           }
 
-          // Just validate the upload in this phase
           const fileBuffer = req.file.buffer;
           const fileName = req.file.originalname;
-          const userId = req.user?.id; // from auth middleware
+          const userId = req.user?.id;
+
+          const rawText = await extractTextFromBuffer(fileBuffer);
+          const chunks = chunkText(rawText, 1000, 200);
 
           res.status(200).json({
-               message: "File uploaded successfully",
+               message: "File uploaded and texts extracted successfully",
                document: {
                     fileName,
                     size: req.file.size,
                     userId,
+                    totalCharacters: rawText.length,
+                    totalChunks: chunks.length,
                },
+               chunksPreview: chunks.slice(0, 3),
           });
      } catch (error) {
           console.error("Error processing document upload:", error);
           res.status(500).json({
-               error: "Internal server error during upload",
+               error: "Internal server error during upload/processing",
           });
      }
 };
