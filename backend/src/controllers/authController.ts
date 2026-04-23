@@ -1,5 +1,10 @@
 import type { Request, Response } from "express";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 import { supabase } from "../config/supabase.js";
+
+const JWT_SECRET =
+     process.env.JWT_SECRET || "default_secret_key_for_development_only";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
      try {
@@ -12,23 +17,29 @@ export const register = async (req: Request, res: Response): Promise<void> => {
                return;
           }
 
-          const { data, error } = await supabase.auth.admin.createUser({
-               email,
-               password,
-               email_confirm: true,
-          });
+          const saltRounds = 10;
+          const passwordHash = await bcrypt.hash(password, saltRounds);
+
+          const { data, error } = await supabase
+               .from("users")
+               .insert([{ email, password_hash: passwordHash }])
+               .select("id, email, created_at")
+               .single();
 
           if (error) {
-               res.status(400).json({ error: error.message });
+               if (error.code === "23505") {
+                    res.status(400).json({
+                         error: "Email is already registered",
+                    });
+               } else {
+                    res.status(400).json({ error: error.message });
+               }
                return;
           }
 
           res.status(201).json({
                message: "User registered successfully",
-               user: {
-                    id: data.user.id,
-                    email: data.user.email,
-               },
+               user: data,
           });
      } catch (error) {
           console.error("Registration error:", error);
@@ -49,30 +60,43 @@ export const login = async (req: Request, res: Response): Promise<void> => {
                return;
           }
 
-          // Auth menggunakan password standard
-          const { data, error } = await supabase.auth.signInWithPassword({
-               email,
-               password,
-          });
+          const { data: user, error } = await supabase
+               .from("users")
+               .select("id, email, password_hash")
+               .eq("email", email)
+               .single();
 
-          if (error || !data.user || !data.session) {
-               res.status(401).json({
-                    error: error?.message || "Invalid login credentials",
-               });
+          if (error || !user) {
+               res.status(401).json({ error: "Invalid login credentials" });
                return;
           }
 
-          // Kembalikan token access (JWT). Frontend akan menyimpannya.
+          const isPasswordValid = await bcrypt.compare(
+               password,
+               user.password_hash,
+          );
+          if (!isPasswordValid) {
+               res.status(401).json({ error: "Invalid login credentials" });
+               return;
+          }
+
+          const payload = {
+               id: user.id,
+               email: user.email,
+          };
+
+          const access_token = jwt.sign(payload, JWT_SECRET, {
+               expiresIn: "24h",
+          });
+
           res.status(200).json({
                message: "Login successful",
                user: {
-                    id: data.user.id,
-                    email: data.user.email,
+                    id: user.id,
+                    email: user.email,
                },
                tokens: {
-                    access_token: data.session.access_token,
-                    refresh_token: data.session.refresh_token,
-                    expires_at: data.session.expires_at,
+                    access_token,
                },
           });
      } catch (error) {
@@ -83,7 +107,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const me = async (req: Request, res: Response): Promise<void> => {
      try {
-          // req.user diisi oleh middleware verifyAuth
           const user = req.user;
 
           if (!user) {
@@ -94,7 +117,6 @@ export const me = async (req: Request, res: Response): Promise<void> => {
           res.status(200).json({
                id: user.id,
                email: user.email,
-               last_sign_in_at: user.last_sign_in_at,
           });
      } catch (error) {
           console.error("Me endpoint error:", error);
