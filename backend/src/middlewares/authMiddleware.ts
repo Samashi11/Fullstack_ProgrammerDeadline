@@ -28,7 +28,6 @@ export const verifyAuth = async (
           }
 
           const token = authHeader.split(" ")[1];
-
           if (!token) {
                res.status(401).json({ error: "Token not found" });
                return;
