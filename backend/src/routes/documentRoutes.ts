@@ -1,10 +1,18 @@
 import { Router } from "express";
 import type { Request, Response, NextFunction } from "express";
-import { uploadDocument } from "../controllers/documentController.js";
+import {
+     uploadDocument,
+     getDocuments,
+     deleteDocument,
+} from "../controllers/documentController.js";
 import { verifyAuth } from "../middlewares/authMiddleware.js";
 import { upload } from "../middlewares/uploadMiddleware.js";
 
 const router = Router();
+
+router.get("/", verifyAuth, getDocuments);
+
+router.delete("/:id", verifyAuth, deleteDocument);
 
 router.post(
      "/upload",
