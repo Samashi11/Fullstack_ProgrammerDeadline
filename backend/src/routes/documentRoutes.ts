@@ -1,0 +1,26 @@
+import { Router } from "express";
+import type { Request, Response, NextFunction } from "express";
+import { uploadDocument } from "../controllers/documentController.js";
+import { verifyAuth } from "../middlewares/authMiddleware.js";
+import { upload } from "../middlewares/uploadMiddleware.js";
+
+const router = Router();
+
+// Route for uploading a PDF document
+// Requires valid authentication token and processes "document" form field
+router.post(
+     "/upload",
+     verifyAuth,
+     (req: Request, res: Response, next: NextFunction) => {
+          upload.single("document")(req, res, (err) => {
+               if (err) {
+                    res.status(400).json({ error: err.message });
+                    return;
+               }
+               next();
+          });
+     },
+     uploadDocument,
+);
+
+export default router;
