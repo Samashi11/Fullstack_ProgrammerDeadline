@@ -6,8 +6,6 @@ import { upload } from "../middlewares/uploadMiddleware.js";
 
 const router = Router();
 
-// Route for uploading a PDF document
-// Requires valid authentication token and processes "document" form field
 router.post(
      "/upload",
      verifyAuth,

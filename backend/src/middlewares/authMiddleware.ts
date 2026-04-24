@@ -1,5 +1,8 @@
 import type { Request, Response, NextFunction } from "express";
-import { supabase } from "../config/supabase.js";
+import jwt from "jsonwebtoken";
+
+const JWT_SECRET =
+     process.env.JWT_SECRET || "default_secret_key_for_development_only";
 
 declare global {
      namespace Express {
@@ -25,17 +28,20 @@ export const verifyAuth = async (
           }
 
           const token = authHeader.split(" ")[1];
-
-          const { data, error } = await supabase.auth.getUser(token);
-
-          if (error || !data.user) {
-               res.status(401).json({ error: "Invalid or expired token" });
+          if (!token) {
+               res.status(401).json({ error: "Token not found" });
                return;
           }
 
-          req.user = data.user;
+          jwt.verify(token, JWT_SECRET, (err, decoded) => {
+               if (err) {
+                    res.status(401).json({ error: "Invalid or expired token" });
+                    return;
+               }
 
-          next();
+               req.user = decoded;
+               next();
+          });
      } catch (error) {
           console.error("Auth middleware error:", error);
           res.status(500).json({
