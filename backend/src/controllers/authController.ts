@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { supabase } from "../config/supabase.js";
+import { supabase } from "../config/supabase.ts";
 
 const JWT_SECRET =
      process.env.JWT_SECRET || "default_secret_key_for_development_only";
@@ -107,6 +107,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const me = async (req: Request, res: Response): Promise<void> => {
      try {
+
           const user = req.user;
 
           if (!user) {
