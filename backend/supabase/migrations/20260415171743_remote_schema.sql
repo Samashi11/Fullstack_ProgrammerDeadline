@@ -24,8 +24,9 @@ create extension if not exists "vector" with schema "public";
 
 
   create table "public"."users" (
-    "id" uuid not null,
+    "id" uuid not null default gen_random_uuid(),
     "email" text not null,
+    "password_hash" text not null,
     "created_at" timestamp with time zone not null default timezone('utc'::text, now())
       );
 
@@ -38,11 +39,15 @@ CREATE UNIQUE INDEX documents_pkey ON public.documents USING btree (id);
 
 CREATE UNIQUE INDEX users_pkey ON public.users USING btree (id);
 
+CREATE UNIQUE INDEX users_email_key ON public.users USING btree (email);
+
 alter table "public"."document_chunks" add constraint "document_chunks_pkey" PRIMARY KEY using index "document_chunks_pkey";
 
 alter table "public"."documents" add constraint "documents_pkey" PRIMARY KEY using index "documents_pkey";
 
 alter table "public"."users" add constraint "users_pkey" PRIMARY KEY using index "users_pkey";
+
+alter table "public"."users" add constraint "users_email_key" UNIQUE using index "users_email_key";
 
 alter table "public"."document_chunks" add constraint "document_chunks_document_id_fkey" FOREIGN KEY (document_id) REFERENCES public.documents(id) ON DELETE CASCADE not valid;
 
@@ -51,10 +56,6 @@ alter table "public"."document_chunks" validate constraint "document_chunks_docu
 alter table "public"."documents" add constraint "documents_user_id_fkey" FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE not valid;
 
 alter table "public"."documents" validate constraint "documents_user_id_fkey";
-
-alter table "public"."users" add constraint "users_id_fkey" FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE not valid;
-
-alter table "public"."users" validate constraint "users_id_fkey";
 
 set check_function_bodies = off;
 
