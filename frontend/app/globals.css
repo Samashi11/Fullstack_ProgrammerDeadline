@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* =========================
+   THEME (dari config kamu)
+========================= */
+@theme {
+  /* === Colors === */
+  --color-inverse-surface: #1e293b;
+  --color-secondary-container: #f1f5f9;
+  --color-on-tertiary-fixed: #042f2e;
+  --color-tertiary: #0d9488;
+  --color-on-primary: #ffffff;
+  --color-on-tertiary-fixed-variant: #0f766e;
+  --color-primary-container: #dbeafe;
+  --color-outline: #e2e8f0;
+  --color-primary-fixed: #dbeafe;
+  --color-surface-bright: #ffffff;
+  --color-surface-container: #f1f3fc;
+  --color-surface-variant: #f1f5f9;
+  --color-on-secondary: #ffffff;
+  --color-on-primary-fixed: #1e3a8a;
+  --color-error-container: #fee2e2;
+  --color-tertiary-container: #ccfbf1;
+  --color-surface-dim: #f6f7f8;
+  --color-primary-fixed-dim: #bfdbfe;
+  --color-on-error-container: #7f1d1d;
+  --color-on-surface-variant: #64748b;
+  --color-surface: #ffffff;
+  --color-surface-tint: #197fe6;
+  --color-on-secondary-fixed-variant: #334155;
+  --color-on-secondary-fixed: #0f172a;
+  --color-surface-container-highest: #e0e2eb;
+  --color-outline-variant: #cbd5e1;
+  --color-error: #ef4444;
+  --color-on-surface: #0f172a;
+  --color-tertiary-fixed: #ccfbf1;
+  --color-primary: #197fe6;
+  --color-inverse-on-surface: #f1f5f9;
+  --color-secondary: #475569;
+  --color-on-error: #ffffff;
+  --color-on-primary-container: #1e40af;
+  --color-on-secondary-container: #1e293b;
+  --color-inverse-primary: #93c5fd;
+  --color-surface-container-high: #ebedf7;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-primary-fixed-variant: #1d4ed8;
+  --color-on-background: #0f172a;
+  --color-on-tertiary-container: #134e4a;
+  --color-secondary-fixed: #e2e8f0;
+  --color-surface-container-low: #f6f7f8;
+  --color-on-tertiary: #ffffff;
+  --color-secondary-fixed-dim: #cbd5e1;
+  --color-tertiary-fixed-dim: #99f6e4;
+  --color-background: #f6f7f8;
+
+  /* === Font === */
+  --font-headline: "Inter", sans-serif;
+  --font-body: "Inter", sans-serif;
+  --font-label: "Inter", sans-serif;
+
+  /* === Radius === */
+  --radius-default: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* =========================
+   BASE STYLE (WAJIB)
+========================= */
+@layer base {
+  body {
+    @apply font-body bg-background text-on-surface antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* =========================
+   OPTIONAL (biar gak kaku)
+========================= */
+@layer components {
+  .card {
+    @apply bg-surface rounded-xl shadow-md hover:shadow-xl transition p-6;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-on-primary px-6 py-3 rounded-xl shadow-md hover:scale-105 transition;
+  }
+
+  .btn-secondary {
+    @apply border border-outline px-6 py-3 rounded-xl hover:bg-surface-container-low transition;
+  }
 }
