@@ -51,3 +51,35 @@ export const generateEmbeddings = async (
           throw new Error("Gagal mengolah vector embeddings teks dengan AI");
      }
 };
+
+export const generateQueryEmbedding = async (
+     text: string,
+): Promise<number[]> => {
+     try {
+          const result = await genAI.models.embedContent({
+               model: "gemini-embedding-2",
+               contents: text,
+               config: { outputDimensionality: 768 },
+          });
+
+          if (!result.embeddings || result.embeddings.length === 0) {
+               throw new Error("Embedding kosong untuk pertanyaan");
+          }
+
+          const embeddingValues = result.embeddings[0]?.values;
+
+          if (!embeddingValues) {
+               throw new Error(
+                    "Nilai embedding (values) tidak ditemukan dalam response API",
+               );
+          }
+
+          return embeddingValues;
+     } catch (error) {
+          console.error(
+               "Error saat men-generate embedding untuk query:",
+               error,
+          );
+          throw new Error("Gagal memproses pertanyaan dengan AI");
+     }
+};
