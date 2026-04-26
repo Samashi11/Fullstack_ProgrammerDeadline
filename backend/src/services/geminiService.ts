@@ -83,3 +83,35 @@ export const generateQueryEmbedding = async (
           throw new Error("Gagal memproses pertanyaan dengan AI");
      }
 };
+
+export const generateChatResponse = async (
+     query: string,
+     contextText: string,
+): Promise<string> => {
+     try {
+          const prompt = `Anda adalah asisten cerdas untuk sistem manajemen pengetahuan.
+Jawab pertanyaan pengguna secara akurat dan informatif berdasarkan KONTEKS yang diberikan berikut ini.
+Jika informasi tidak tersedia atau tidak relevan dari konteks, katakan dengan sopan bahwa Anda tidak mengetahui jawabannya berdasarkan dokumen yang ada. JANGAN mengarang jawaban (halusinasi).
+
+KONTEKS:
+${contextText}
+
+PERTANYAAN PENGGUNA:
+${query}
+
+JAWABAN:`;
+
+          const result = await genAI.models.generateContent({
+               model: "gemini-2.5-flash",
+               contents: prompt,
+          });
+
+          return (
+               result.text ||
+               "Mohon maaf, tidak ada respons yang dihasilkan dari model AI."
+          );
+     } catch (error) {
+          console.error("Error generating chat response via Gemini:", error);
+          throw new Error("Gagal mendapatkan respons teks dari AI Gemini");
+     }
+};
