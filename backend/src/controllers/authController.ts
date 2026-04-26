@@ -107,6 +107,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 export const me = async (req: Request, res: Response): Promise<void> => {
      try {
+
           const user = req.user;
 
           if (!user) {

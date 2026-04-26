@@ -13,7 +13,6 @@ const router = Router();
 router.get("/", verifyAuth, getDocuments);
 
 router.delete("/:id", verifyAuth, deleteDocument);
-
 router.post(
      "/upload",
      verifyAuth,

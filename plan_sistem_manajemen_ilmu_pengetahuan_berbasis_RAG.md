@@ -1,5 +1,6 @@
 # Plan: RAG Knowledge Management App (Strict Architecture)
 
+
 Sistem RAG untuk manajemen dokumen (PDF) multi-user secara terisolasi.
 **Arsitektur Jaringan (Ketat): Frontend (Next.js) -> API Backend (Express) -> Database/Auth (Supabase)**.
 Frontend dilarang berkomunikasi langsung ke Supabase URL. Semua interaksi pengguna wajib melalui Express (termasuk Auth dan pengindeksan data AI Gemini).

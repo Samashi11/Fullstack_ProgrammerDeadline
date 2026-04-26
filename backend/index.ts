@@ -19,6 +19,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/chat", chatRoutes);
 
+
 app.get("/", (req: Request, res: Response) => {
      res.send(
           "Halo! Server Express dengan TypeScript berjalan super cepat di Bun 🚀",
