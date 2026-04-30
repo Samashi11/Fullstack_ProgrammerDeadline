@@ -1,55 +1,47 @@
-import Link from "next/dist/client/link";
+import Link from "next/link";
 
 export default function Navbar() {
-  return (
-    <header className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md shadow-sm border-b border-slate-200/50 dark:border-slate-800/50 docked full-width top-0 sticky z-50">
-      <nav className="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
-        <div className="text-xl font-black tracking-tighter text-blue-600 dark:text-blue-400 font-inter">
-          StudyAI
-        </div>
-        <div className="hidden md:flex items-center gap-8 font-inter text-sm font-medium tracking-tight">
-          <a
-            className="text-slate-600 dark:text-slate-400 hover:text-blue-500 transition-colors"
-            href="#problem"
-          >
-            Problem
-          </a>
-          <a
-            className="text-slate-600 dark:text-slate-400 hover:text-blue-500 transition-colors"
-            href="#solution"
-          >
-            Solution
-          </a>
-          <a
-            className="text-slate-600 dark:text-slate-400 hover:text-blue-500 transition-colors"
-            href="#features"
-          >
-            Features
-          </a>
-          <a
-            className="text-slate-600 dark:text-slate-400 hover:text-blue-500 transition-colors"
-            href="#"
-          >
-            About
-          </a>
-        </div>
-        <div className="flex items-center gap-4 font-inter text-sm font-medium tracking-tight">
-          
-          <Link
-            href="/login"
-            className="text-slate-600 dark:text-slate-400 px-4 py-2 hover:text-blue-500 transition-colors scale-95 active:opacity-80"
-          >
-            Login
-          </Link>
-
-          <Link
-            href="/register"
-            className="bg-primary text-white px-6 py-2 rounded-full hover:bg-blue-700 transition-all scale-95 active:opacity-80 shadow-lg shadow-primary/20"
-          >
-            Sign Up
-          </Link>
-        </div>
-      </nav>
-    </header>
-  );
+     return (
+          <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-xl antialiased border-b border-outline-variant/30">
+               <div className="flex items-center justify-between px-8 h-16 w-full max-w-container_max mx-auto">
+                    <div className="text-xl font-bold tracking-tighter text-primary font-h3">
+                         KnowledgeBase
+                    </div>
+                    <div className="hidden md:flex gap-8">
+                         <Link
+                              href="#"
+                              className="text-primary font-semibold hover:text-primary transition-colors duration-200 active:scale-95"
+                         >
+                              Features
+                         </Link>
+                         <Link
+                              href="#"
+                              className="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95"
+                         >
+                              Solutions
+                         </Link>
+                         <Link
+                              href="#"
+                              className="text-on-surface-variant hover:text-primary transition-colors duration-200 active:scale-95"
+                         >
+                              Pricing
+                         </Link>
+                    </div>
+                    <div className="flex items-center gap-4">
+                         <Link
+                              href="/login"
+                              className="px-4 py-2 border border-primary/50 text-primary rounded hover:bg-primary/10 transition-colors font-body-sm active:scale-95 duration-100"
+                         >
+                              Sign In
+                         </Link>
+                         <Link
+                              href="/register"
+                              className="px-4 py-2 bg-primary-container text-white rounded hover:bg-primary transition-all font-body-sm active:scale-95 duration-100"
+                         >
+                              Get Started
+                         </Link>
+                    </div>
+               </div>
+          </nav>
+     );
 }
