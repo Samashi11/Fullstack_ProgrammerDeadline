@@ -4,16 +4,16 @@ import Features from "./components/Features";
 import Footer from "./components/Footer";
 
 export default function Home() {
-     return (
-          <div className="bg-background text-on-background font-body-md min-h-screen flex flex-col dark">
-               <Navbar />
+  return (
+    <div className="bg-background text-on-background min-h-screen flex flex-col">
+      <Navbar />
 
-               <main className="grow pt-20">
-                    <Hero />
-                    <Features />
-               </main>
+      <main className="grow pt-20">
+        <Hero />
+        <Features />
+      </main>
 
-               <Footer />
-          </div>
-     );
+      <Footer />
+    </div>
+  );
 }
