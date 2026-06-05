@@ -1,4 +1,6 @@
 import type { Config } from "tailwindcss";
+// import forms from "@tailwindcss/forms";
+// import containerQueries from "@tailwindcss/container-queries";
 
 const config: Config = {
   darkMode: "class",
@@ -19,6 +21,18 @@ const config: Config = {
         "outline-variant": "#3c4a42",
         "on-surface": "#dae2fd",
         "on-surface-variant": "#bbcabf",
+      },
+
+      spacing: {
+        xs: "4px",
+        md: "16px",
+        gutter: "24px",
+        container_max: "1440px",
+        sm: "8px",
+        unit: "4px",
+        xl: "40px",
+        lg: "24px",
+        "2xl": "64px",
       },
 
       fontFamily: {

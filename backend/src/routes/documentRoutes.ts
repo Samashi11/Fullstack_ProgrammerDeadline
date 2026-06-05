@@ -10,12 +10,12 @@ import { upload } from "../middlewares/uploadMiddleware.js";
 
 const router = Router();
 
-router.get("/", verifyAuth, getDocuments);
+router.get("/", getDocuments);
 
-router.delete("/:id", verifyAuth, deleteDocument);
+router.delete("/:id", deleteDocument);
+
 router.post(
      "/upload",
-     verifyAuth,
      (req: Request, res: Response, next: NextFunction) => {
           upload.single("document")(req, res, (err) => {
                if (err) {
