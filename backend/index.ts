@@ -1,15 +1,24 @@
+import dotenv from "dotenv";
+dotenv.config();
+
+import { supabase } from "./src/config/supabase.js";
 import express from "express";
 import type { Request, Response } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./src/routes/authRoutes.ts";
 import documentRoutes from "./src/routes/documentRoutes.ts";
 import chatRoutes from "./src/routes/chatRoutes.ts";
 
-dotenv.config();
+
+(async () => {
+  const { data, error } = await supabase.from("documents").select("*");
+
+  console.log("TEST DB:", { data, error });
+})();
+
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
