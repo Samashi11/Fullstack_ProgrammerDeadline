@@ -2,31 +2,56 @@
 
 import { useEffect, useState } from "react";
 
+type Document = {
+  id: string;
+  title: string;
+  file_name: string;
+  created_at: string;
+};
+
 export default function RecentUploads() {
   const [documents, setDocuments] = useState<Document[]>([]);
-  type Document = {
-    id: string;
-    title: string;
-    file_name: string;
-    created_at: string;
+
+  const fetchDocuments = async () => {
+    try {
+      const res = await fetch("http://localhost:3001/api/documents");
+
+      const data = await res.json();
+
+      console.log("DOCUMENTS:", data);
+
+      setDocuments(data.documents || []);
+    } catch (err) {
+      console.error("FETCH ERROR:", err);
+    }
   };
 
   useEffect(() => {
-    const fetchDocuments = async () => {
-      try {
-        const res = await fetch("http://localhost:3001/api/documents");
-        const data = await res.json();
+    fetchDocuments();
 
-        console.log("DOCUMENTS:", data);
-
-        setDocuments(data.documents || []);
-      } catch (err) {
-        console.error("FETCH ERROR:", err);
-      }
+    const handleDocumentUploaded = () => {
+      fetchDocuments();
     };
 
-    fetchDocuments();
+    window.addEventListener("documentUploaded", handleDocumentUploaded);
+
+    return () => {
+      window.removeEventListener("documentUploaded", handleDocumentUploaded);
+    };
   }, []);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await fetch(`http://localhost:3001/api/documents/${id}`, {
+        method: "DELETE",
+      });
+
+      // Update state tanpa reload
+      setDocuments((prev) => prev.filter((doc) => doc.id !== id));
+    } catch (err) {
+      console.error("DELETE ERROR:", err);
+    }
+  };
 
   return (
     <section className="max-w-4xl mx-auto">
@@ -38,12 +63,15 @@ export default function RecentUploads() {
           >
             history
           </span>
+
           <h2 className="font-h2 text-h2 text-on-surface">Recent Uploads</h2>
         </div>
+
         <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold tracking-wide border border-primary/20 uppercase">
           Guest Session
         </span>
       </div>
+
       <div className="glass-panel rounded-xl overflow-hidden">
         <table className="w-full text-left">
           <thead>
@@ -51,14 +79,17 @@ export default function RecentUploads() {
               <th className="px-gutter py-md font-label-caps text-label-caps text-on-surface-variant">
                 File Name
               </th>
+
               <th className="px-gutter py-md font-label-caps text-label-caps text-on-surface-variant">
                 Status
               </th>
+
               <th className="px-gutter py-md font-label-caps text-label-caps text-on-surface-variant text-right">
                 Action
               </th>
             </tr>
           </thead>
+
           <tbody className="divide-y divide-white/5">
             {documents.length === 0 ? (
               <tr>
@@ -80,10 +111,12 @@ export default function RecentUploads() {
                       <span className="material-symbols-outlined text-zinc-500">
                         picture_as_pdf
                       </span>
+
                       <div>
                         <div className="font-body-md text-on-surface">
                           {doc.file_name}
                         </div>
+
                         <div className="font-body-sm text-outline-variant">
                           {new Date(doc.created_at).toLocaleString()}
                         </div>
@@ -92,24 +125,35 @@ export default function RecentUploads() {
                   </td>
 
                   <td className="px-gutter py-lg">
-                    <div className="flex items-center gap-sm text-zinc-400">
-                      <span className="w-2 h-2 rounded-full bg-zinc-600"></span>
+                    <div className="flex items-center gap-sm text-green-400">
+                      <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+
                       <span className="font-body-sm">Ready</span>
                     </div>
                   </td>
 
                   <td className="px-gutter py-lg text-right">
                     <button
-                      className="flex items-center gap-xs ml-auto font-body-sm text-red-400 hover:text-red-500"
-                      onClick={async () => {
-                        await fetch(
-                          `http://localhost:3001/api/documents/${doc.id}`,
-                          { method: "DELETE" },
-                        );
-                        location.reload(); // quick hack
-                      }}
+                      className="
+      ml-auto
+      flex
+      h-10
+      w-10
+      items-center
+      justify-center
+      rounded-full
+      bg-red-500/10
+      text-red-400
+      transition-all
+      duration-200
+      hover:bg-red-500/20
+      hover:scale-110
+      active:scale-95
+    "
+                      onClick={() => handleDelete(doc.id)}
+                      title="Delete Document"
                     >
-                      Delete
+                      <span className="material-symbols-outlined">delete</span>
                     </button>
                   </td>
                 </tr>
@@ -122,6 +166,7 @@ export default function RecentUploads() {
           <p className="font-body-md text-on-surface-variant italic">
             Sign up to unlock persistent storage and full research summaries.
           </p>
+
           <button className="bg-white/5 hover:bg-white/10 border border-white/10 text-on-surface px-md py-sm rounded-lg font-medium transition-all active:scale-95">
             Create Account
           </button>
