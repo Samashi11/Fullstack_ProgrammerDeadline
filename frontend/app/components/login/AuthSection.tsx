@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/app/lib/api";
 import { setToken } from "@/app/lib/auth";
+import Link from "next/dist/client/link";
 
 type AuthType = "login" | "register";
 
@@ -16,32 +17,48 @@ export default function AuthSection({ type }: { type: AuthType }) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    console.log("=== SUBMIT ===");
+    console.log("TYPE:", type);
+    console.log("EMAIL:", email);
+    console.log("PASSWORD:", password);
+
     setLoading(true);
 
     try {
       const endpoint =
         type === "login" ? "/api/auth/login" : "/api/auth/register";
 
+      console.log("ENDPOINT:", endpoint);
+
       const res = await api.post(endpoint, {
         email,
         password,
       });
 
-      // ✅ HANDLE REGISTER DULU (STOP DI SINI)
+      console.log("RESPONSE:", res.data);
+
       if (type === "register") {
         alert("Register berhasil, silakan login");
         router.push("/login");
         return;
       }
 
-      // ✅ BARU HANDLE LOGIN
       const token = res.data.tokens.access_token;
+
+      console.log("TOKEN:", token);
 
       setToken(token);
 
       router.push("/dashboard");
-    } catch (err) {
-      console.error(`${type} gagal:`, err);
+    } catch (err: any) {
+      console.error("FULL ERROR:", err);
+
+      if (err.response) {
+        console.log("STATUS:", err.response.status);
+        console.log("DATA:", err.response.data);
+      }
+
       alert(`${type === "login" ? "Login" : "Register"} gagal`);
     } finally {
       setLoading(false);
@@ -67,15 +84,17 @@ export default function AuthSection({ type }: { type: AuthType }) {
           </div>
 
           <h1 className="font-h2 text-h2 text-on-surface tracking-tight mb-xs">
-            Welcome back
+            {type === "login" ? "Welcome back" : "Create an account"}
           </h1>
           <p className="font-body-md text-body-md text-on-surface-variant text-center">
-            Authenticate to access your workspace
+            {type === "login"
+              ? "Authenticate to access your workspace"
+              : "Fill in the details to create your account"}
           </p>
         </div>
 
         {/* Social */}
-        <div className="flex flex-col gap-sm mb-lg">
+        {/* <div className="flex flex-col gap-sm mb-lg">
           <button className="w-full flex items-center justify-center gap-md py-3 px-4 rounded-lg border border-outline-variant/50 bg-surface-container-low hover:bg-surface-container-high transition-colors font-body-md text-body-md text-on-surface group">
             Continue with GitHub
           </button>
@@ -83,19 +102,19 @@ export default function AuthSection({ type }: { type: AuthType }) {
           <button className="w-full flex items-center justify-center gap-md py-3 px-4 rounded-lg border border-outline-variant/50 bg-surface-container-low hover:bg-surface-container-high transition-colors font-body-md text-body-md text-on-surface group">
             Continue with Google
           </button>
-        </div>
+        </div> */}
 
         {/* Divider */}
-        <div className="flex items-center mb-lg">
+        {/* <div className="flex items-center mb-lg">
           <div className="flex-grow border-t border-outline-variant/30"></div>
           <span className="px-md font-body-sm text-body-sm text-on-surface-variant">
             Or continue with email
           </span>
           <div className="flex-grow border-t border-outline-variant/30"></div>
-        </div>
+        </div> */}
 
         {/* Form */}
-        <form className="flex flex-col" onSubmit={(e) => e.preventDefault()}>
+        <form className="flex flex-col" onSubmit={handleSubmit}>
           {/* Email */}
           <div className="flex flex-col gap-xs mb-md">
             <label className="font-label-caps text-label-caps text-on-surface-variant">
@@ -109,8 +128,10 @@ export default function AuthSection({ type }: { type: AuthType }) {
 
               <input
                 className="w-full bg-surface-container-highest/30 border border-outline-variant/50 rounded-lg pl-10 pr-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container/50 transition-all shadow-inner"
-                placeholder="name@company.com"
                 type="email"
+                placeholder="name@company.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
           </div>
@@ -130,6 +151,8 @@ export default function AuthSection({ type }: { type: AuthType }) {
                 className="w-full bg-surface-container-highest/30 border border-outline-variant/50 rounded-lg pl-10 pr-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container/50 transition-all shadow-inner"
                 type="password"
                 placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
           </div>
@@ -144,20 +167,24 @@ export default function AuthSection({ type }: { type: AuthType }) {
           {/* Submit */}
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase tracking-wider py-3.5 rounded-lg hover:bg-primary-container/90 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all active:scale-[0.98] border border-primary-container/50"
           >
-            Sign In
+            {loading ? "Loading..." : type === "login" ? "Sign In" : "Register"}
           </button>
         </form>
 
         {/* Footer */}
         <div className="mt-lg text-center">
-          <p className="font-body-sm text-body-sm text-on-surface-variant">
+          <Link
+            href={type === "login" ? "/register" : "/login"}
+            className="font-body-sm text-body-sm text-on-surface-variant"
+          >
             Don&apos;t have an account?{" "}
             <span className="text-primary hover:text-primary-fixed-dim transition-colors font-medium cursor-pointer">
-              Request access
+              {type === "login" ? "Register" : "Sign In"}
             </span>
-          </p>
+          </Link>
         </div>
       </div>
     </div>

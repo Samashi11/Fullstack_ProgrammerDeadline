@@ -5,7 +5,7 @@ import Hero from "../../components/login/Hero";
 
 export default function LoginPage() {
   return (
-    <body className="bg-background min-h-screen flex items-center justify-center p-md relative overflow-hidden bg-grid-pattern">
+    <body>
       {/* <Navbar /> */}
       <div className="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display">
         {/* <Hero /> */}
