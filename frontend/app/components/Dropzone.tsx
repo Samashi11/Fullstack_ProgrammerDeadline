@@ -20,6 +20,7 @@ export default function Dropzone() {
       console.log("RAW RESPONSE:", text);
 
       const data = JSON.parse(text); // parse manual biar keliatan error HTML
+      alert("Upload berhasil!");
       console.log("UPLOAD SUCCESS:", data);
 
       alert("Upload berhasil!");

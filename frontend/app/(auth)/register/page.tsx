@@ -5,17 +5,14 @@ import Hero from "../../components/login/Hero";
 
 export default function LoginPage() {
   return (
-    <main className="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display">
-      <Navbar />
+    <body>
+      {/* <Navbar /> */}
+      <div className="bg-background-light dark:bg-background-dark min-h-screen flex flex-col font-display">
+        {/* <Hero /> */}
 
-      <div className="flex-1 flex overflow-hidden">
-        <Hero />
+        {/* <Footer /> */}
         <AuthSection type="register" />
       </div>
-
-      <Footer />
-    </main>
+    </body>
   );
 }
-
-
