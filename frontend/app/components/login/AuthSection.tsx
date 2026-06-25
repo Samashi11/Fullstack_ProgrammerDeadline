@@ -49,120 +49,116 @@ export default function AuthSection({ type }: { type: AuthType }) {
   };
 
   return (
-    <div className="flex-1 flex items-center justify-center p-6 sm:p-12 bg-white dark:bg-slate-900">
-      <div className="w-full max-w-md">
-        <div className="mb-10 lg:hidden">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="material-symbols-outlined text-primary text-3xl">
-              school
-            </span>
-            <h2 className="text-xl font-bold dark:text-white">StudyAI</h2>
-          </div>
-        </div>
+    <div className="bg-background min-h-screen flex items-center justify-center p-md relative overflow-hidden bg-grid-pattern">
+      {/* Ambient Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-primary-container/10 blur-[100px] rounded-[100%] pointer-events-none"></div>
 
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
-            {type === "login" ? "Welcome back" : "Create your account"}
-          </h2>
-          <p className="text-slate-500 dark:text-slate-400">
-            {type === "login"
-              ? "Please enter your university details to sign in."
-              : "Start your journey with StudyAI today."}
+      {/* Card */}
+      <div className="w-full max-w-[440px] bg-surface-container/40 backdrop-blur-2xl border border-outline-variant/30 rounded-xl p-lg shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative z-10 flex flex-col">
+        {/* Header */}
+        <div className="flex flex-col items-center mb-xl">
+          <div className="w-12 h-12 rounded-lg bg-surface-container-highest border border-outline-variant/50 flex items-center justify-center mb-md shadow-inner">
+            <span
+              className="material-symbols-outlined text-primary-container"
+              style={{ fontVariationSettings: "'FILL' 1" }}
+            >
+              dataset
+            </span>
+          </div>
+
+          <h1 className="font-h2 text-h2 text-on-surface tracking-tight mb-xs">
+            Welcome back
+          </h1>
+          <p className="font-body-md text-body-md text-on-surface-variant text-center">
+            Authenticate to access your workspace
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block">
+        {/* Social */}
+        <div className="flex flex-col gap-sm mb-lg">
+          <button className="w-full flex items-center justify-center gap-md py-3 px-4 rounded-lg border border-outline-variant/50 bg-surface-container-low hover:bg-surface-container-high transition-colors font-body-md text-body-md text-on-surface group">
+            Continue with GitHub
+          </button>
+
+          <button className="w-full flex items-center justify-center gap-md py-3 px-4 rounded-lg border border-outline-variant/50 bg-surface-container-low hover:bg-surface-container-high transition-colors font-body-md text-body-md text-on-surface group">
+            Continue with Google
+          </button>
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center mb-lg">
+          <div className="flex-grow border-t border-outline-variant/30"></div>
+          <span className="px-md font-body-sm text-body-sm text-on-surface-variant">
+            Or continue with email
+          </span>
+          <div className="flex-grow border-t border-outline-variant/30"></div>
+        </div>
+
+        {/* Form */}
+        <form className="flex flex-col" onSubmit={(e) => e.preventDefault()}>
+          {/* Email */}
+          <div className="flex flex-col gap-xs mb-md">
+            <label className="font-label-caps text-label-caps text-on-surface-variant">
               Email Address
             </label>
 
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-slate-400 text-xl">
-                  mail
-                </span>
-              </div>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px]">
+                mail
+              </span>
 
               <input
+                className="w-full bg-surface-container-highest/30 border border-outline-variant/50 rounded-lg pl-10 pr-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container/50 transition-all shadow-inner"
+                placeholder="name@company.com"
                 type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="block w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-primary focus:border-primary transition-all"
-                placeholder="name@university.edu"
-                required
               />
             </div>
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200 block">
-                Password
-              </label>
-              <a className="text-sm font-semibold text-primary hover:underline">
-                Forgot password?
-              </a>
-            </div>
+          {/* Password */}
+          <div className="flex flex-col gap-xs mb-sm">
+            <label className="font-label-caps text-label-caps text-on-surface-variant">
+              Password
+            </label>
 
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <span className="material-symbols-outlined text-slate-400 text-xl">
-                  lock
-                </span>
-              </div>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant/50 text-[20px]">
+                lock
+              </span>
 
               <input
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="block w-full pl-11 pr-12 py-3 bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white placeholder-slate-400 focus:ring-primary focus:border-primary transition-all"
+                className="w-full bg-surface-container-highest/30 border border-outline-variant/50 rounded-lg pl-10 pr-4 py-3 font-body-md text-body-md text-on-surface placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container/50 transition-all shadow-inner"
                 type="password"
                 placeholder="••••••••"
-                required
               />
-
-              <button
-                type="button"
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-400 hover:text-slate-600 transition-colors"
-              >
-                <span className="material-symbols-outlined text-xl">
-                  visibility
-                </span>
-              </button>
             </div>
           </div>
 
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              className="h-4 w-4 text-primary border-slate-300 rounded"
-            />
-            <label className="ml-2 text-sm text-slate-700 dark:text-slate-300">
-              Remember me for 30 days
-            </label>
+          {/* Forgot */}
+          <div className="flex justify-end mb-lg">
+            <a className="font-body-sm text-body-sm text-primary hover:text-primary-fixed-dim transition-colors hover:underline decoration-primary/30 underline-offset-4">
+              Forgot password?
+            </a>
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full flex items-center justify-center px-6 py-3.5 text-base font-bold rounded-xl text-white bg-primary hover:bg-primary/90 shadow-xl shadow-primary/20 transition-all"
+            className="w-full bg-primary-container text-on-primary-container font-label-caps text-label-caps uppercase tracking-wider py-3.5 rounded-lg hover:bg-primary-container/90 hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] transition-all active:scale-[0.98] border border-primary-container/50"
           >
-            {loading ? "Loading..." : type === "login" ? "Sign In" : "Sign Up"}
+            Sign In
           </button>
-          <p className="text-sm text-center text-slate-500">
-            {type === "login"
-              ? "Don't have an account?"
-              : "Already have an account?"}
-            <span
-              onClick={() =>
-                router.push(type === "login" ? "/register" : "/login")
-              }
-              className="text-primary font-semibold cursor-pointer ml-1"
-            >
-              {type === "login" ? "Sign up" : "Sign in"}
+        </form>
+
+        {/* Footer */}
+        <div className="mt-lg text-center">
+          <p className="font-body-sm text-body-sm text-on-surface-variant">
+            Don&apos;t have an account?{" "}
+            <span className="text-primary hover:text-primary-fixed-dim transition-colors font-medium cursor-pointer">
+              Request access
             </span>
           </p>
-        </form>
+        </div>
       </div>
     </div>
   );
