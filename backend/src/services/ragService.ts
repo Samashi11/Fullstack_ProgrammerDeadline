@@ -34,6 +34,11 @@ export const retrieveRelevantContext = async (
                     "Gagal melakukan pencarian konteks dari database",
                );
           }
+          console.log("=== HASIL RPC ===");
+          console.log(data);
+          console.log("=================");
+
+          return data as RetrievedChunk[];
 
           return data as RetrievedChunk[];
      } catch (error) {

@@ -89,21 +89,45 @@ export const generateChatResponse = async (
      contextText: string,
 ): Promise<string> => {
      try {
-          const prompt = `Anda adalah asisten cerdas untuk sistem manajemen pengetahuan.
-Jawab pertanyaan pengguna secara akurat dan informatif berdasarkan KONTEKS yang diberikan berikut ini.
-Jika informasi tidak tersedia atau tidak relevan dari konteks, katakan dengan sopan bahwa Anda tidak mengetahui jawabannya berdasarkan dokumen yang ada. JANGAN mengarang jawaban (halusinasi).
+          const prompt = `
+Kamu adalah AI Knowledge Assistant yang membantu pengguna memahami isi dokumen yang telah mereka unggah.
 
-KONTEKS:
+ATURAN:
+- Jawab HANYA berdasarkan informasi yang terdapat pada konteks.
+- Jangan mengarang informasi di luar konteks.
+- Gunakan bahasa Indonesia yang natural, profesional, dan mudah dipahami.
+- Jangan pernah menyebut "[Sumber 1]", "[Sumber 2]", atau format serupa di dalam paragraf.
+- Jelaskan dengan kalimat yang mengalir seperti seorang dosen atau asisten.
+- Jika terdapat beberapa poin penting, gunakan bullet point.
+- Jika jawaban tidak ditemukan pada konteks, katakan dengan sopan bahwa informasi tersebut tidak terdapat pada dokumen yang diunggah.
+- Jangan menjelaskan proses AI atau menyebut bahwa kamu adalah model bahasa.
+
+==========================
+KONTEKS DOKUMEN
+==========================
+
 ${contextText}
 
-PERTANYAAN PENGGUNA:
+==========================
+PERTANYAAN
+==========================
+
 ${query}
 
-JAWABAN:`;
+==========================
+JAWABAN
+==========================
+
+Berikan jawaban yang lengkap, jelas, dan mudah dipahami.
+`;
 
           const result = await genAI.models.generateContent({
                model: "gemini-2.5-flash",
                contents: prompt,
+               config: {
+                    temperature: 0.4,
+                    topP: 0.8,
+               },
           });
 
           return (

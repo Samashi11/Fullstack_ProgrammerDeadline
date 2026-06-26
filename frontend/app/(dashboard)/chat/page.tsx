@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import api from "@/app/lib/api";
 import { useAuth } from "@/app/hooks/useAuth";
 import LogoutButton from "../../../app/components/logout/LogoutButton";
@@ -10,9 +10,74 @@ import ChatHeader from "../../components/ChatHeader";
 import ChatMessage from "../../components/ChatMessage";
 import ChatInput from "../../components/ChatInput";
 
+interface Message {
+  type: "user" | "ai";
+  content: string;
+}
+
 export default function ChatPage() {
+
   useAuth();
+
   const [userData, setUserData] = useState<any>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [totalDocuments, setTotalDocuments] = useState(0);
+
+  const bottomRef = useRef<HTMLDivElement>(null);
+
+  const handleSend = async (query: string) => {
+    console.log("CHATPAGE:", query);
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        type: "user",
+        content: query,
+      },
+    ]);
+
+    setLoading(true);
+
+    try {
+      console.log("Mengirim request...");
+
+      const res = await api.post("/api/chat", {
+        query,
+      });
+
+      console.log("Response Backend:", res.data);
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: res.data.answer,
+        },
+      ]);
+      setLoading(false);
+    } catch (err) {
+
+      setMessages((prev) => [
+        ...prev,
+        {
+          type: "ai",
+          content: "❌ Terjadi kesalahan saat menghubungi AI."
+        }
+      ])
+
+    }
+  };
+
+  const fetchDocuments = async () => {
+    try {
+      const res = await api.get("/api/documents");
+
+      setTotalDocuments(res.data.documents.length);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -20,11 +85,31 @@ export default function ChatPage() {
         const res = await api.get("/api/auth/me");
         setUserData(res.data);
       } catch (err) {
-        console.error("Unauthorized", err);
+        console.error(err);
       }
     };
+
     fetchUser();
+    fetchDocuments();
   }, []);
+
+  useEffect(() => {
+    const refresh = () => {
+      fetchDocuments();
+    };
+
+    window.addEventListener("documentUploaded", refresh);
+
+    return () => {
+      window.removeEventListener("documentUploaded", refresh);
+    };
+  }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({
+      behavior: "smooth",
+    });
+  }, [messages, loading]);
 
   return (
     <div className="flex h-screen overflow-hidden font-body-md text-body-md text-on-surface">
@@ -42,51 +127,101 @@ export default function ChatPage() {
           backgroundSize: "40px 40px",
         }}
       >
-        <ChatHeader fileName="React_Handbook.pdf" />
-
+        <ChatHeader totalDocuments={totalDocuments} />
         {/* Chat History Area */}
-        <div className="flex-1 overflow-y-auto px-lg py-xl flex flex-col gap-xl custom-scrollbar">
-          <ChatMessage type="user">
-            Can you explain the useEffect hook based on chapter 4?
-          </ChatMessage>
+        <div className="flex-1 overflow-y-auto scroll-smooth px-lg py-xl flex flex-col gap-xl custom-scrollbar">
 
-          <ChatMessage type="ai" citations={["Page 12", "Page 15"]}>
-            <p className="font-body-md text-body-md text-on-surface mb-md">
-              Based on the context provided, the{" "}
-              <code className="bg-white/10 px-1 rounded text-primary">
-                useEffect
-              </code>{" "}
-              hook is used to perform side effects in function components. It
-              serves the same purpose as <code>componentDidMount</code>,{" "}
-              <code>componentDidUpdate</code>, and{" "}
-              <code>componentWillUnmount</code> in React classes, but unified
-              into a single API.
-            </p>
-            <p className="font-body-md text-body-md text-on-surface mb-md">
-              The handbook notes that side effects include things like data
-              fetching, subscriptions, or manually changing the DOM.
-            </p>
-          </ChatMessage>
+          {messages.length === 0 && !loading ? (
 
-          <ChatMessage type="user">What about dependencies array?</ChatMessage>
+            <div className="flex-1 flex flex-col justify-center items-center text-center">
 
-          <ChatMessage type="ai" citations={["Page 13"]} isLast>
-            <p className="font-body-md text-body-md text-on-surface mb-md">
-              The dependency array is the second argument passed to{" "}
-              <code className="bg-white/10 px-1 rounded text-primary">
-                useEffect
-              </code>
-              . If you pass an array, React will only re-run the effect if one
-              of the dependencies has changed between renders. If you pass an
-              empty array{" "}
-              <code className="bg-white/10 px-1 rounded text-primary">[]</code>,
-              it tells React that your effect doesn't depend on any values from
-              props or state, so it never needs to re-run.
-            </p>
-          </ChatMessage>
+              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+                <span className="material-symbols-outlined text-primary text-5xl">
+                  auto_awesome
+                </span>
+              </div>
+
+              <h1 className="text-4xl font-bold text-on-surface mb-3">
+                Welcome to Knowledge Base AI
+              </h1>
+
+              <p className="text-on-surface-variant max-w-2xl">
+                Ask anything about your uploaded documents.
+                AI will search through your knowledge base
+                and answer using relevant information.
+              </p>
+
+              <div className="grid grid-cols-2 gap-4 mt-10 max-w-2xl w-full">
+
+                <button
+                  onClick={() => handleSend("Ringkas isi dokumen ini")}
+                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
+                >
+                  📄 Ringkas isi dokumen
+                </button>
+
+                <button
+                  onClick={() => handleSend("Apa poin penting dari dokumen ini?")}
+                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
+                >
+                  ⭐ Poin penting
+                </button>
+
+                <button
+                  onClick={() => handleSend("Jelaskan isi dokumen")}
+                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
+                >
+                  💡 Jelaskan dokumen
+                </button>
+
+                <button
+                  onClick={() => handleSend("Buatkan rangkuman")}
+                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
+                >
+                  📝 Buat rangkuman
+                </button>
+
+              </div>
+
+            </div>
+
+          ) : (
+
+            <>
+
+              {messages.map((message, index) => (
+                <ChatMessage
+                  key={index}
+                  type={message.type}
+                  isLast={index === messages.length - 1}
+                >
+                  {message.content}
+                </ChatMessage>
+              ))}
+
+              {loading && (
+                <ChatMessage type="ai">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce"></div>
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce delay-150"></div>
+                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce delay-300"></div>
+
+                    <span className="text-zinc-400 ml-3">
+                      Thinking...
+                    </span>
+                  </div>
+                </ChatMessage>
+              )}
+
+              <div ref={bottomRef}></div>
+
+            </>
+
+          )}
+
         </div>
 
-        <ChatInput />
+        <ChatInput onSend={handleSend} />
       </main>
     </div>
   );

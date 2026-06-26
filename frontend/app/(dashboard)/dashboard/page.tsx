@@ -16,6 +16,7 @@ import MobileNavbar from "../../../app/components/MobileNavbar";
 export default function DashboardPage() {
   useAuth();
   const [userData, setUserData] = useState<any>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,7 +50,11 @@ export default function DashboardPage() {
 
       {/* Main Content Content Container */}
       <main className="flex-1 md:ml-[280px] p-6 md:p-xl max-w-container_max mx-auto w-full mb-16 md:mb-0">
-        <Header logoutComponent={<LogoutButton />} />
+        <Header
+          logoutComponent={<LogoutButton />}
+          search={search}
+          setSearch={setSearch}
+        />
 
         <StatGrid />
 

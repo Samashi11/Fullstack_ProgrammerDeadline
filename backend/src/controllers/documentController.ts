@@ -15,15 +15,14 @@ export const uploadDocument = async (
 
     const fileBuffer = req.file.buffer;
     const fileName = req.file.originalname;
-    const userId = req.user?.id || "f42798b8-7cec-4c4c-8e44-f1474199a561";
-    // const userId = req.user?.id;
+    const userId = req.user?.id;
 
-    // if (!userId) {
-    //      res.status(401).json({
-    //           error: "Unauthorized access, user ID is missing",
-    //      });
-    //      return;
-    // }
+    if (!userId) {
+      res.status(401).json({
+        error: "Unauthorized",
+      });
+      return;
+    }
 
     const rawText = await extractTextFromBuffer(fileBuffer);
     const chunks = chunkText(rawText, 1000, 200);
@@ -105,15 +104,14 @@ export const getDocuments = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.id || "f42798b8-7cec-4c4c-8e44-f1474199a561";
-    // const userId = req.user?.id;
+    const userId = req.user?.id;
 
-    // if (!userId) {
-    //      res.status(401).json({
-    //           error: "Unauthorized access, user ID is missing",
-    //      });
-    //      return;
-    // }
+    if (!userId) {
+      res.status(401).json({
+        error: "Unauthorized",
+      });
+      return;
+    }
 
     const { data, error } = await supabase
       .from("documents")
@@ -140,15 +138,14 @@ export const deleteDocument = async (
   try {
     const { id } = req.params;
 
-    const userId = req.user?.id || "f42798b8-7cec-4c4c-8e44-f1474199a561";
-    // const userId = req.user?.id;
+    const userId = req.user?.id;
 
-    // if (!userId) {
-    //      res.status(401).json({
-    //           error: "Unauthorized access, user ID is missing",
-    //      });
-    //      return;
-    // }
+    if (!userId) {
+      res.status(401).json({
+        error: "Unauthorized",
+      });
+      return;
+    }
 
     const { error } = await supabase
       .from("documents")
