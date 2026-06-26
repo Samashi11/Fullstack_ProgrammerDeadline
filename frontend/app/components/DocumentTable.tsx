@@ -13,11 +13,11 @@ interface Document {
 }
 
 interface DocumentTableProps {
-  search: string;
+  search?: string;
 }
 
 export default function DocumentTable({
-  search,
+  search = "",
 }: DocumentTableProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [uploadingFiles, setUploadingFiles] = useState<string[]>([]);

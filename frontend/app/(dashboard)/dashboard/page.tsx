@@ -4,16 +4,18 @@ import { useEffect, useState } from "react";
 import api from "@/app/lib/api";
 import { useAuth } from "@/app/hooks/useAuth";
 import LogoutButton from "../../../app/components/logout/LogoutButton";
-// Sub-komponen dideklarasikan di bawah untuk menjaga kode tetap modular dan readable
+
 import Sidebar from "../../../app/components/Sidebar";
 import Header from "../../../app/components/Header";
-import Dropzone from "../../../app/components/Dropzone";
-import DocumentTable from "../../../app/components/DocumentTable";
+import StatGrid from "../../components/StatGrid";
+import RecentActivity from "../../../app/components/RecentActivity";
+import PinnedSection from "../../../app/components/PinnedSection";
+import ActivityChart from "../../../app/components/ActivityChart";
+import MobileNavbar from "../../../app/components/MobileNavbar";
 
 export default function DashboardPage() {
   useAuth();
   const [userData, setUserData] = useState<any>(null);
-  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -28,26 +30,43 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="bg-background text-on-background flex h-screen overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
-      {/* Sidebar - Ditambahkan LogoutButton di dalamnya secara strategis */}
+    <div className="bg-background text-on-background font-body-md min-h-screen flex selection:bg-primary-container selection:text-white relative">
+      {/* Grid Overlay menggunakan Inline Styles */}
+      <div
+        className="fixed inset-0 pointer-events-none z-[-1]"
+        style={{
+          backgroundImage: `
+            linear-gradient(to right, rgba(16, 185, 129, 0.05) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(16, 185, 129, 0.05) 1px, transparent 1px)
+          `,
+          backgroundSize: "40px 40px",
+        }}
+      />
+
+      {/* Sidebar Navigation */}
       <Sidebar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 md:ml-[280px] flex flex-col h-screen relative bg-gradient-to-br from-background via-surface-dim to-background">
-        <Header
-          logoutComponent={<LogoutButton />}
-          search={search}
-          setSearch={setSearch}
-        />
 
-        {/* Scrollable Content Canvas */}
-        <div className="flex-1 overflow-y-auto p-gutter custom-scrollbar">
-          <div className="max-w-container_max mx-auto space-y-xl pb-2xl">
-            <Dropzone />
-            <DocumentTable search={search} />
+      {/* Main Content Content Container */}
+      <main className="flex-1 md:ml-[280px] p-6 md:p-xl max-w-container_max mx-auto w-full mb-16 md:mb-0">
+        <Header logoutComponent={<LogoutButton />} />
+
+        <StatGrid />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 flex flex-col gap-6">
+            <RecentActivity />
+          </div>
+
+          <div className="lg:col-span-1 flex flex-col gap-6">
+            <PinnedSection />
+            <ActivityChart />
           </div>
         </div>
       </main>
+
+      {/* Bottom Floating Menu for Mobile */}
+      <MobileNavbar />
     </div>
   );
 }

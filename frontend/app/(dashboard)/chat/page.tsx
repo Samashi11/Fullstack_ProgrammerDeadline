@@ -5,7 +5,7 @@ import api from "@/app/lib/api";
 import { useAuth } from "@/app/hooks/useAuth";
 import LogoutButton from "../../../app/components/logout/LogoutButton";
 
-import ChatSidebar from "../../components/ChatSidebar";
+import Sidebar from "../../components/Sidebar";
 import ChatHeader from "../../components/ChatHeader";
 import ChatMessage from "../../components/ChatMessage";
 import ChatInput from "../../components/ChatInput";
@@ -29,7 +29,7 @@ export default function ChatPage() {
   return (
     <div className="flex h-screen overflow-hidden font-body-md text-body-md text-on-surface">
       {/* Sidebar khusus Chat Interface */}
-      <ChatSidebar logoutComponent={<LogoutButton />} />
+      <Sidebar />
 
       {/* Main Chat Canvas dengan Custom Grid Background */}
       <main
