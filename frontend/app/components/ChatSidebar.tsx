@@ -1,4 +1,7 @@
 import React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+// import Link from "next/dist/client/link";
 
 export default function ChatSidebar({
   logoutComponent,
@@ -21,13 +24,13 @@ export default function ChatSidebar({
 
       <ul className="flex flex-col gap-2 flex-1 px-2 font-['Space_Grotesk'] text-sm">
         <li>
-          <a className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link href="/dashboard" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
             <span className="material-symbols-outlined">dashboard</span>
             Dashboard
-          </a>
+          </Link>
         </li>
         <li>
-          <a className="bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500 flex items-center gap-3 px-4 py-3 rounded-r-lg transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link href="/document" className="bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500 flex items-center gap-3 px-4 py-3 rounded-r-lg transition-all duration-200 cursor-pointer active:opacity-80">
             <span
               className="material-symbols-outlined"
               style={{ fontVariationSettings: "'FILL' 1" }}
@@ -35,25 +38,25 @@ export default function ChatSidebar({
               description
             </span>
             Documents
-          </a>
+          </Link>
         </li>
         <li>
-          <a className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link href="/chat" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
             <span className="material-symbols-outlined">forum</span>
             Chat
-          </a>
+          </Link>
         </li>
         <li>
-          <a className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link href="/quizzes" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
             <span className="material-symbols-outlined">quiz</span>
             Quizzes
-          </a>
+          </Link>
         </li>
         <li>
-          <a className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link href="/settings" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
             <span className="material-symbols-outlined">settings</span>
             Settings
-          </a>
+          </Link>
         </li>
       </ul>
 
