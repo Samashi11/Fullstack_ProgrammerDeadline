@@ -1,7 +1,8 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL:
+    "https://fullstackprogrammerdeadline-back-production.up.railway.app/",
 });
 
 api.interceptors.request.use((config) => {
