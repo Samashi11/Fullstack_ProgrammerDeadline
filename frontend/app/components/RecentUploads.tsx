@@ -14,7 +14,7 @@ export default function RecentUploads() {
 
   const fetchDocuments = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/documents");
+      const res = await fetch("fullstackprogrammerdeadline-back-production.up.railway.app/api/documents");
 
       const data = await res.json();
 
@@ -42,7 +42,7 @@ export default function RecentUploads() {
 
   const handleDelete = async (id: string) => {
     try {
-      await fetch(`http://localhost:3001/api/documents/${id}`, {
+      await fetch(`fullstackprogrammerdeadline-back-production.up.railway.app/api/documents/${id}`, {
         method: "DELETE",
       });
 
