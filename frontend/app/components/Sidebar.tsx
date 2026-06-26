@@ -1,4 +1,6 @@
 import React from "react";
+import Link from "next/link";
+
 
 export default function Sidebar() {
   return (
@@ -34,10 +36,13 @@ export default function Sidebar() {
           </a>
         </li>
         <li>
-          <a className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link
+            href="/chat"
+            className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200"
+          >
             <span className="material-symbols-outlined">forum</span>
             Chat
-          </a>
+          </Link>
         </li>
         <li>
           <a className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
@@ -54,7 +59,7 @@ export default function Sidebar() {
       </ul>
 
       {/* Logout Button Container */}
-      
+
 
       <div className="mt-auto px-4">
         <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/50 border border-white/5">

@@ -81,6 +81,12 @@ export const uploadDocument = async (
       return;
     }
 
+    // Update status menjadi ready setelah indexing selesai
+    await supabase
+      .from("documents")
+      .update({ status: "ready" })
+      .eq("id", documentId);
+
     res.status(200).json({
       message: "File processing and AI knowledge indexing complete!",
       documentId,
@@ -111,7 +117,7 @@ export const getDocuments = async (
 
     const { data, error } = await supabase
       .from("documents")
-      .select("id, title, file_name, created_at")
+      .select("id, title, file_name, created_at, status")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
