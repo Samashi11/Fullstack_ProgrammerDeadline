@@ -1,4 +1,14 @@
-export default function Header({ logoutComponent }: { logoutComponent: React.ReactNode }) {
+interface HeaderProps {
+  logoutComponent: React.ReactNode;
+  search: string;
+  setSearch: (value: string) => void;
+}
+
+export default function Header({
+  logoutComponent,
+  search,
+  setSearch,
+}: HeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex items-center justify-between px-gutter py-md bg-[rgba(19,27,46,0.4)] backdrop-blur-[20px] border-b border-outline-variant/20">
       <div className="flex items-center gap-4">
@@ -18,6 +28,8 @@ export default function Header({ logoutComponent }: { logoutComponent: React.Rea
             className="bg-surface-container/50 border border-outline-variant/50 rounded-full pl-10 pr-4 py-2 w-64 text-on-surface focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-body-sm text-body-sm shadow-inner placeholder:text-on-surface-variant/70"
             placeholder="Search knowledge base..."
             type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
         <div className="px-4 mb-4">{logoutComponent}</div>

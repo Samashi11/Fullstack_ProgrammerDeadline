@@ -16,6 +16,7 @@ import MobileNavbar from "../../../app/components/MobileNavbar";
 export default function DashboardPage() {
   useAuth();
   const [userData, setUserData] = useState<any>(null);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -46,16 +47,22 @@ export default function DashboardPage() {
       {/* Sidebar Navigation */}
       <Sidebar />
 
+
       {/* Main Content Content Container */}
       <main className="flex-1 md:ml-[280px] p-6 md:p-xl max-w-container_max mx-auto w-full mb-16 md:mb-0">
-        <Header logoutComponent={<LogoutButton />}  />
+        <Header
+          logoutComponent={<LogoutButton />}
+          search={search}
+          setSearch={setSearch}
+        />
+
         <StatGrid />
 
-        {/* Main Content Split (Activity vs Sidebar Cards) */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 flex flex-col gap-6">
             <RecentActivity />
           </div>
+
           <div className="lg:col-span-1 flex flex-col gap-6">
             <PinnedSection />
             <ActivityChart />

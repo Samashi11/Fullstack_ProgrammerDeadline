@@ -1,7 +1,12 @@
-import Link from "next/dist/client/link";
+import { usePathname } from "next/navigation";
 import React from "react";
+import Link from "next/link";
+
 
 export default function Sidebar() {
+
+  const pathname = usePathname();
+
   return (
     <nav className="hidden md:flex flex-col fixed left-0 top-0 h-screen w-[280px] bg-zinc-950/80 backdrop-blur-2xl border-r border-white/5 pt-20 pb-6 z-40">
       <div className="px-6 mb-10">
@@ -18,13 +23,25 @@ export default function Sidebar() {
 
       <ul className="flex flex-col gap-2 flex-1 px-2 font-['Space_Grotesk'] text-sm">
         <li>
-          <Link href="/dashboard" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link
+            href="/dashboard"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer active:opacity-80 ${pathname === "/dashboard"
+              ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500"
+              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+              }`}
+          >
             <span className="material-symbols-outlined">dashboard</span>
             Dashboard
           </Link>
         </li>
         <li>
-          <Link href="/document" className="bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500 flex items-center gap-3 px-4 py-3 rounded-r-lg transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link
+            href="/document"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer active:opacity-80 ${pathname === "/document"
+              ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500"
+              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+              }`}
+          >
             <span
               className="material-symbols-outlined"
               style={{ fontVariationSettings: "'FILL' 1" }}
@@ -35,19 +52,37 @@ export default function Sidebar() {
           </Link>
         </li>
         <li>
-          <Link href="/chat" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link
+            href="/chat"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer active:opacity-80 ${pathname === "/chat"
+              ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500"
+              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+              }`}
+          >
             <span className="material-symbols-outlined">forum</span>
             Chat
           </Link>
         </li>
         <li>
-          <Link href="/quizzes" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link
+            href="/quizzes"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer active:opacity-80 ${pathname === "/quizzes"
+              ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500"
+              : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+              }`}
+          >
             <span className="material-symbols-outlined">quiz</span>
             Quizzes
           </Link>
         </li>
         <li>
-          <Link href="/settings" className="text-zinc-500 hover:text-zinc-300 flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-white/5 transition-all duration-200 cursor-pointer active:opacity-80">
+          <Link
+            href="/settings"
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200 cursor-pointer active:opacity-80 ${pathname === "/settings"
+                ? "bg-emerald-500/10 text-emerald-400 border-l-2 border-emerald-500"
+                : "text-zinc-500 hover:text-zinc-300 hover:bg-white/5"
+              }`}
+          >
             <span className="material-symbols-outlined">settings</span>
             Settings
           </Link>
@@ -55,7 +90,7 @@ export default function Sidebar() {
       </ul>
 
       {/* Logout Button Container */}
-      
+
 
       <div className="mt-auto px-4">
         <div className="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low/50 border border-white/5">

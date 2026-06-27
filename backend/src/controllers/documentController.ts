@@ -15,15 +15,14 @@ export const uploadDocument = async (
 
     const fileBuffer = req.file.buffer;
     const fileName = req.file.originalname;
-    const userId = req.user?.id || "f42798b8-7cec-4c4c-8e44-f1474199a561";
-    // const userId = req.user?.id;
+    const userId = req.user?.id;
 
-    // if (!userId) {
-    //      res.status(401).json({
-    //           error: "Unauthorized access, user ID is missing",
-    //      });
-    //      return;
-    // }
+    if (!userId) {
+      res.status(401).json({
+        error: "Unauthorized",
+      });
+      return;
+    }
 
     const rawText = await extractTextFromBuffer(fileBuffer);
     const chunks = chunkText(rawText, 1000, 200);
@@ -81,6 +80,12 @@ export const uploadDocument = async (
       return;
     }
 
+    // Update status menjadi ready setelah indexing selesai
+    await supabase
+      .from("documents")
+      .update({ status: "ready" })
+      .eq("id", documentId);
+
     res.status(200).json({
       message: "File processing and AI knowledge indexing complete!",
       documentId,
@@ -99,19 +104,18 @@ export const getDocuments = async (
   res: Response,
 ): Promise<void> => {
   try {
-    const userId = req.user?.id || "f42798b8-7cec-4c4c-8e44-f1474199a561";
-    // const userId = req.user?.id;
+    const userId = req.user?.id;
 
-    // if (!userId) {
-    //      res.status(401).json({
-    //           error: "Unauthorized access, user ID is missing",
-    //      });
-    //      return;
-    // }
+    if (!userId) {
+      res.status(401).json({
+        error: "Unauthorized",
+      });
+      return;
+    }
 
     const { data, error } = await supabase
       .from("documents")
-      .select("id, title, file_name, created_at")
+      .select("id, title, file_name, created_at, status")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
@@ -134,15 +138,14 @@ export const deleteDocument = async (
   try {
     const { id } = req.params;
 
-    const userId = req.user?.id || "f42798b8-7cec-4c4c-8e44-f1474199a561";
-    // const userId = req.user?.id;
+    const userId = req.user?.id;
 
-    // if (!userId) {
-    //      res.status(401).json({
-    //           error: "Unauthorized access, user ID is missing",
-    //      });
-    //      return;
-    // }
+    if (!userId) {
+      res.status(401).json({
+        error: "Unauthorized",
+      });
+      return;
+    }
 
     const { error } = await supabase
       .from("documents")

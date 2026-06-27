@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import api from "@/app/lib/api";
 
 export default function Dropzone() {
   const [isDragging, setIsDragging] = useState(false);
@@ -17,17 +18,23 @@ export default function Dropzone() {
     setUploading(true);
     setSuccess(false);
 
+    window.dispatchEvent(
+      new CustomEvent("documentUploading", {
+        detail: {
+          fileName: file.name,
+        },
+      })
+    );
+
     try {
       const res = await fetch("https://fullstackprogrammerdeadline-back-production.up.railway.app/api/documents/upload", {
         method: "POST",
         body: formData,
       });
 
-      const text = await res.text();
+      const data = res.data;
 
-      console.log("RAW RESPONSE:", text);
-
-      const data = JSON.parse(text);
+      console.log("UPLOAD SUCCESS:", data);
 
       console.log("UPLOAD SUCCESS:", data);
 
@@ -122,13 +129,12 @@ export default function Dropzone() {
       />
 
       <div
-        className={`glass-panel rounded-xl border-2 border-dashed p-2xl flex flex-col items-center justify-center gap-lg transition-all duration-300 group cursor-pointer emerald-glow relative overflow-hidden ${
-          isDragging
-            ? "border-primary bg-primary/5"
-            : success
-              ? "border-green-500 bg-green-500/5"
-              : "border-white/20 hover:border-primary/50"
-        }`}
+        className={`glass-panel rounded-xl border-2 border-dashed p-2xl flex flex-col items-center justify-center gap-lg transition-all duration-300 group cursor-pointer emerald-glow relative overflow-hidden ${isDragging
+          ? "border-primary bg-primary/5"
+          : success
+            ? "border-green-500 bg-green-500/5"
+            : "border-white/20 hover:border-primary/50"
+          }`}
         onClick={() => !uploading && fileInputRef.current?.click()}
         onDragEnter={handleDragIn}
         onDragLeave={handleDragOut}
@@ -140,13 +146,12 @@ export default function Dropzone() {
 
         {/* Icon */}
         <div
-          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 ${
-            success
-              ? "bg-green-500/20 text-green-400 scale-110"
-              : uploading
-                ? "bg-blue-500/20 text-blue-400"
-                : "bg-primary/10 text-primary group-hover:scale-110"
-          }`}
+          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 ${success
+            ? "bg-green-500/20 text-green-400 scale-110"
+            : uploading
+              ? "bg-blue-500/20 text-blue-400"
+              : "bg-primary/10 text-primary group-hover:scale-110"
+            }`}
         >
           {uploading ? (
             <span className="material-symbols-outlined text-4xl animate-spin">

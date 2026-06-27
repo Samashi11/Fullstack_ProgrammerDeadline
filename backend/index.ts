@@ -11,9 +11,22 @@ import chatRoutes from "./src/routes/chatRoutes.ts";
 
 
 (async () => {
-  const { data, error } = await supabase.from("documents").select("*");
+  // Cek tabel documents
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*");
 
-  console.log("TEST DB:", { data, error });
+  console.log("========== TEST DOCUMENTS ==========");
+  console.log({ data, error });
+
+  // Cek tabel document_chunks
+  const { data: chunkData, error: chunkError } = await supabase
+    .from("document_chunks")
+    .select("id, document_id")
+    .limit(10);
+
+  console.log("========== TEST CHUNKS ==========");
+  console.log({ chunkData, chunkError });
 })();
 
 

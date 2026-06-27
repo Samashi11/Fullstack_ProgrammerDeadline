@@ -8,7 +8,11 @@ export const handleChat = async (
 ): Promise<void> => {
      try {
           const { query } = req.body;
-          const user = req.user; // Dari verifyAuth middleware
+          const user = req.user;
+
+          console.log("================================");
+          console.log("CHAT USER ID:", user?.id);
+          console.log("================================");
 
           if (!user || !user.id) {
                res.status(401).json({ error: "Unauthorized" });
@@ -39,10 +43,7 @@ export const handleChat = async (
 
           // 2. Gabungkan konteks untuk dikirim ke prompt LLM
           const contextText = retrievedChunks
-               .map(
-                    (chunk, index) =>
-                         `[Sumber ${index + 1}]:\n${chunk.content}`,
-               )
+               .map((chunk) => chunk.content)
                .join("\n\n");
 
           // 3. Panggil Gemini LLM untuk Inference dengan konteks
