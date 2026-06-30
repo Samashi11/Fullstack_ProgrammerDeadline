@@ -28,7 +28,7 @@ export default function Dropzone() {
 
     try {
       const res = await fetch(
-        "https://fullstackprogrammerdeadline-back-production.up.railway.app/api/documents/upload",
+        "http://localhost:3001/api/documents/upload",
         {
           method: "POST",
           body: formData,
@@ -36,8 +36,6 @@ export default function Dropzone() {
       );
 
       const data = await res.json();
-
-      console.log("UPLOAD SUCCESS:", data);
 
       console.log("UPLOAD SUCCESS:", data);
 
