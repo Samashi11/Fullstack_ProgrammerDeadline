@@ -28,11 +28,12 @@ export const uploadDocument = async (
     const chunks = chunkText(rawText, 1000, 200);
 
     if (chunks.length === 0) {
-      res.status(400).json({
-        error: "PDF text extraction resulted in empty content",
-      });
-      return;
-    }
+  res.status(400).json({
+    error:
+      "Tidak ada teks yang dapat dibaca pada PDF. Kemungkinan PDF berupa hasil scan atau hanya berisi gambar. Gunakan PDF yang dapat dipilih (selectable text) atau tambahkan OCR terlebih dahulu.",
+  });
+  return;
+}
 
     console.log("==== DEBUG UPLOAD ====");
     console.log("REQ.USER:", req.user);

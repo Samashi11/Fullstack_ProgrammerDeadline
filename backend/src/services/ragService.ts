@@ -39,10 +39,54 @@ export const retrieveRelevantContext = async (
           console.log("=================");
 
           return data as RetrievedChunk[];
-
-          return data as RetrievedChunk[];
      } catch (error) {
           console.error("Error di retrieveRelevantContext:", error);
+          throw error;
+     }
+};
+
+export interface DocumentChunk {
+     content: string;
+     metadata: {
+          chunk_index: number;
+          origin: string;
+     };
+}
+
+export const retrieveDocumentChunks = async (
+     documentId: string,
+     userId: string,
+): Promise<DocumentChunk[]> => {
+     try {
+          const { data: document, error: documentError } = await supabase
+               .from("documents")
+               .select("id")
+               .eq("id", documentId)
+               .eq("user_id", userId)
+               .single();
+
+          if (documentError || !document) {
+               throw new Error("Document tidak ditemukan atau bukan milik user.");
+          }
+
+          const { data, error } = await supabase
+               .from("document_chunks")
+               .select("content, metadata")
+               .eq("document_id", documentId);
+
+          if (error) {
+               throw error;
+          }
+
+          const sortedChunks = (data ?? []).sort(
+               (a, b) =>
+                    (a.metadata?.chunk_index ?? 0) -
+                    (b.metadata?.chunk_index ?? 0),
+          );
+
+          return sortedChunks;
+     } catch (error) {
+          console.error("Error retrieveDocumentChunks:", error);
           throw error;
      }
 };

@@ -14,41 +14,44 @@ export const generateEmbeddings = async (
      texts: string[],
 ): Promise<number[][]> => {
      try {
-          const embeddings: number[][] = [];
+          const embeddings = await Promise.all(
+               texts.map(async (text) => {
+                    const result = await genAI.models.embedContent({
+                         model: "gemini-embedding-2",
+                         contents: text,
+                         config: {
+                              outputDimensionality: 768,
+                         },
+                    });
 
-          for (const text of texts) {
-               const result = await genAI.models.embedContent({
-                    model: "gemini-embedding-2",
-                    contents: text,
-                    config: { outputDimensionality: 768 },
-               });
+                    if (!result.embeddings || result.embeddings.length === 0) {
+                         throw new Error(
+                              `Embedding kosong untuk teks: "${text.substring(0, 50)}..."`
+                         );
+                    }
 
-               if (!result.embeddings || result.embeddings.length === 0) {
-                    throw new Error(
-                         `Embedding kosong untuk teks: "${text.substring(0, 50)}..."`,
-                    );
-               }
+                    const embeddingValues = result.embeddings[0]?.values;
 
-               const embeddingValues = result.embeddings[0]?.values;
+                    if (!embeddingValues) {
+                         throw new Error(
+                              "Nilai embedding (values) tidak ditemukan dalam response API"
+                         );
+                    }
 
-               if (!embeddingValues) {
-                    throw new Error(
-                         "Nilai embedding (values) tidak ditemukan dalam response API",
-                    );
-               }
-
-               embeddings.push(embeddingValues);
-
-               await new Promise((resolve) => setTimeout(resolve, 2000));
-          }
+                    return embeddingValues;
+               })
+          );
 
           return embeddings;
      } catch (error) {
           console.error(
                "Error saat men-generate embeddings via Gemini API:",
-               error,
+               error
           );
-          throw new Error("Gagal mengolah vector embeddings teks dengan AI");
+
+          throw new Error(
+               "Gagal mengolah vector embeddings teks dengan AI"
+          );
      }
 };
 
@@ -83,6 +86,11 @@ export const generateQueryEmbedding = async (
           throw new Error("Gagal memproses pertanyaan dengan AI");
      }
 };
+
+export interface QuizGenerationOptions {
+     difficulty: "Easy" | "Medium" | "Hard";
+     questionCount: number;
+}
 
 export const generateChatResponse = async (
      query: string,
@@ -137,5 +145,69 @@ Berikan jawaban yang lengkap, jelas, dan mudah dipahami.
      } catch (error) {
           console.error("Error generating chat response via Gemini:", error);
           throw new Error("Gagal mendapatkan respons teks dari AI Gemini");
+     }
+};
+
+export const generateQuizResponse = async (
+     contextText: string,
+     options: QuizGenerationOptions,
+): Promise<string> => {
+     try {
+
+          const prompt = `
+Kamu adalah AI Quiz Generator.
+
+Tugasmu adalah membuat soal berdasarkan dokumen berikut.
+
+ATURAN:
+
+- Gunakan HANYA informasi pada konteks.
+- Jangan mengarang informasi.
+- Tingkat kesulitan: ${options.difficulty}
+- Jumlah soal: ${options.questionCount}
+- Setiap soal memiliki 4 pilihan jawaban.
+- Hanya satu jawaban benar.
+- Sertakan penjelasan singkat.
+
+Kembalikan HANYA JSON.
+
+Format:
+
+{
+"title":"",
+"description":"",
+"questions":[
+{
+"id":1,
+"question":"",
+"options":["","","",""],
+"correctAnswer":0,
+"explanation":""
+}
+]
+}
+
+KONTEKS:
+
+${contextText}
+`;
+
+          const result = await genAI.models.generateContent({
+               model: "gemini-2.5-flash",
+               contents: prompt,
+               config: {
+                    temperature: 0.4,
+                    topP: 0.8,
+               },
+          });
+
+          return result.text || "";
+
+     } catch (error) {
+
+          console.error("Error generateQuizResponse:", error);
+
+          throw new Error("Gagal membuat Quiz menggunakan Gemini");
+
      }
 };
