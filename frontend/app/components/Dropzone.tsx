@@ -58,9 +58,15 @@ export default function Dropzone() {
       setTimeout(() => {
         setSuccess(false);
       }, 1500);
-    } catch (err) {
-      console.error("UPLOAD ERROR:", err);
-      alert("Upload gagal");
+    } catch (err: any) {
+
+      console.error(err);
+
+      alert(
+        err.response?.data?.error ??
+        "Upload gagal."
+      );
+
     } finally {
       setUploading(false);
     }

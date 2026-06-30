@@ -8,6 +8,7 @@ import cors from "cors";
 import authRoutes from "./src/routes/authRoutes.ts";
 import documentRoutes from "./src/routes/documentRoutes.ts";
 import chatRoutes from "./src/routes/chatRoutes.ts";
+import quizRoutes from "./src/routes/quizRoutes.ts";
 
 
 (async () => {
@@ -40,7 +41,7 @@ app.use(express.json());
 app.use("/api/auth", authRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/chat", chatRoutes);
-
+app.use("/api/quizzes", quizRoutes);
 
 app.get("/", (req: Request, res: Response) => {
      res.send(
