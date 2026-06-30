@@ -15,18 +15,18 @@ router.get("/", verifyAuth, getDocuments);
 router.delete("/:id", verifyAuth, deleteDocument);
 
 router.post(
-  "/upload",
-  verifyAuth,
-  (req: Request, res: Response, next: NextFunction) => {
-    upload.single("document")(req, res, (err) => {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      next();
-    });
-  },
-  uploadDocument,
+     "/upload",
+     verifyAuth,
+     (req: Request, res: Response, next: NextFunction) => {
+          upload.single("document")(req, res, (err) => {
+               if (err) {
+                    res.status(400).json({ error: err.message });
+                    return;
+               }
+               next();
+          });
+     },
+     uploadDocument,
 );
 
 export default router;

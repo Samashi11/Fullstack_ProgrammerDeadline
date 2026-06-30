@@ -10,26 +10,24 @@ import documentRoutes from "./src/routes/documentRoutes.ts";
 import chatRoutes from "./src/routes/chatRoutes.ts";
 import quizRoutes from "./src/routes/quizRoutes.ts";
 
+// (async () => {
+//   // Cek tabel documents
+//   const { data, error } = await supabase
+//     .from("documents")
+//     .select("*");
 
-(async () => {
-  // Cek tabel documents
-  const { data, error } = await supabase
-    .from("documents")
-    .select("*");
+//   console.log("========== TEST DOCUMENTS ==========");
+//   console.log({ data, error });
 
-  console.log("========== TEST DOCUMENTS ==========");
-  console.log({ data, error });
+//   // Cek tabel document_chunks
+//   const { data: chunkData, error: chunkError } = await supabase
+//     .from("document_chunks")
+//     .select("id, document_id")
+//     .limit(10);
 
-  // Cek tabel document_chunks
-  const { data: chunkData, error: chunkError } = await supabase
-    .from("document_chunks")
-    .select("id, document_id")
-    .limit(10);
-
-  console.log("========== TEST CHUNKS ==========");
-  console.log({ chunkData, chunkError });
-})();
-
+//   console.log("========== TEST CHUNKS ==========");
+//   console.log({ chunkData, chunkError });
+// })();
 
 const app = express();
 const port = process.env.PORT || 3001;
