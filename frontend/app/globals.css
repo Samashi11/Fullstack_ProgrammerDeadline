@@ -3,27 +3,53 @@
 @tailwind utilities;
 
 @layer base {
+
   html {
     scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-background text-on-surface antialiased;
+    @apply antialiased;
+    background: #f8fafc;
+    color: #111827;
   }
+
 }
 
 @layer components {
+
   .glass-panel {
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    @apply bg-white border border-gray-200 rounded-2xl shadow-sm;
   }
+
   .emerald-glow {
-    box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.2);
+    box-shadow: none;
   }
+
   .grid-bg {
-    background-image: linear-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px),
-                      linear-gradient(90deg, rgba(16, 185, 129, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
+    background: none;
   }
+
+}
+
+/* ========================= */
+/* SCROLLBAR */
+/* ========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c4b5fd;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a78bfa;
 }

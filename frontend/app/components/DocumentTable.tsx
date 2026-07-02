@@ -103,44 +103,65 @@ export default function DocumentTable({
     });
 
   return (
-    <section>
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="font-h3 text-h3 text-on-surface flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary text-[24px]">
-            folder_open
-          </span>
-          Indexed Library
-        </h2>
+    <section className="mt-10">
 
-        <div className="flex items-center gap-2 text-on-surface-variant">
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-            className="bg-surface-container border border-outline-variant rounded px-3 py-1 text-sm"
-          >
-            <option value="newest">Newest</option>
-            <option value="oldest">Oldest</option>
-            <option value="az">A - Z</option>
-            <option value="za">Z - A</option>
-          </select>
+      <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
 
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="bg-surface-container border border-outline-variant rounded px-3 py-1 text-sm"
-          >
-            <option value="all">All</option>
-            <option value="processing">Processing</option>
-            <option value="ready">Ready</option>
-          </select>
+        <div>
+
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+
+            Document Library
+
+          </h2>
+
+          <p className="mt-1 text-sm text-gray-500">
+
+            Manage all documents that have been indexed by AI.
+
+          </p>
+
+        </div>
+
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="h-10 appearance-none rounded-full border border-gray-200 bg-white pl-4 pr-9 text-sm font-medium text-gray-600 shadow-sm outline-none transition hover:border-violet-300 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+            >
+              <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
+              <option value="az">A - Z</option>
+              <option value="za">Z - A</option>
+            </select>
+            <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-gray-400">
+              unfold_more
+            </span>
+          </div>
+
+          <div className="relative">
+            <select
+              value={filterStatus}
+              onChange={(e) => setFilterStatus(e.target.value)}
+              className="h-10 appearance-none rounded-full border border-gray-200 bg-white pl-4 pr-9 text-sm font-medium text-gray-600 shadow-sm outline-none transition hover:border-violet-300 focus:border-violet-400 focus:ring-4 focus:ring-violet-100"
+            >
+              <option value="all">All</option>
+              <option value="processing">Processing</option>
+              <option value="ready">Ready</option>
+            </select>
+            <span className="material-symbols-outlined pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[18px] text-gray-400">
+              unfold_more
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="w-full flex flex-col gap-2">
+      <div className="overflow-hidden rounded-[28px] border border-gray-100 bg-white shadow-[0_8px_30px_rgba(15,23,42,.05)]">
 
         {/* Table Header */}
 
-        <div className="hidden md:grid grid-cols-12 gap-4 px-6 py-3 text-on-surface-variant font-label-caps text-label-caps uppercase tracking-wider border-b border-outline-variant/20 mb-2">
+        <div className="hidden md:grid grid-cols-12 border-b border-gray-100 bg-gray-50/70 px-8 py-4 text-[11px] font-semibold uppercase tracking-wider text-gray-400">
           <div className="col-span-5">File Name</div>
           <div className="col-span-2">Date Uploaded</div>
           <div className="col-span-2">File Size</div>
@@ -152,28 +173,28 @@ export default function DocumentTable({
         {uploadingFiles.map((fileName) => (
           <div
             key={fileName}
-            className="group grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 py-4 bg-[rgba(19,27,46,0.4)] backdrop-blur-[20px] border border-outline-variant/20 rounded-xl"
+            className="group grid grid-cols-1 md:grid-cols-12 items-center gap-4 border-b border-gray-50 bg-white px-8 py-5 transition"
           >
             <div className="col-span-1 md:col-span-5 flex items-center gap-4">
-              <div className="w-10 h-10 rounded bg-error-container/20 flex items-center justify-center">
-                <span className="material-symbols-outlined text-error">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-red-50">
+                <span className="material-symbols-outlined text-red-500">
                   picture_as_pdf
                 </span>
               </div>
 
-              <p className="font-medium">{fileName}</p>
+              <p className="font-medium text-gray-700">{fileName}</p>
             </div>
 
-            <div className="hidden md:block col-span-2">
+            <div className="hidden md:block col-span-2 text-sm text-gray-400">
               -
             </div>
 
-            <div className="hidden md:block col-span-2">
+            <div className="hidden md:block col-span-2 text-sm text-gray-400">
               -
             </div>
 
             <div className="col-span-1">
-              <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 text-yellow-400 border border-yellow-400/20">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-100 bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-600">
                 <span className="material-symbols-outlined text-[14px] animate-spin">
                   progress_activity
                 </span>
@@ -185,64 +206,95 @@ export default function DocumentTable({
           </div>
         ))}
         {loading ? (
-          <div className="text-center py-10 text-on-surface-variant">
-            Loading documents...
+          <div className="py-24 text-center">
+
+            <div className="mx-auto mb-5 h-9 w-9 animate-spin rounded-full border-[3px] border-violet-500 border-t-transparent" />
+
+            <p className="text-sm text-gray-400">
+
+              Loading documents...
+
+            </p>
+
           </div>
         ) : filteredDocuments.length === 0 ? (
-          <div className="text-center py-10 text-on-surface-variant">
-            {documents.length === 0
-              ? "Belum ada dokumen yang diupload."
-              : "Dokumen tidak ditemukan."}
+
+          <div className="py-24 text-center">
+
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-violet-50">
+              <span className="material-symbols-outlined text-[32px] text-violet-300">
+
+                folder_open
+
+              </span>
+            </div>
+
+            <h3 className="text-lg font-semibold text-gray-700">
+
+              {documents.length === 0
+                ? "No Documents Yet"
+                : "No Matching Documents"}
+
+            </h3>
+
+            <p className="mt-1.5 text-sm text-gray-400">
+
+              {documents.length === 0
+                ? "Upload your first PDF to start building your AI knowledge base."
+                : "Try changing your search keyword or filter."}
+
+            </p>
+
           </div>
+
         ) : (
           filteredDocuments.map((doc) => (
             <div
               key={doc.id}
-              className="group grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 py-4 bg-[rgba(19,27,46,0.4)] backdrop-blur-[20px] border border-outline-variant/20 rounded-xl hover:border-primary/30 transition-all duration-200 relative overflow-hidden"
+              className="group grid grid-cols-1 md:grid-cols-12 items-center gap-4 border-b border-gray-50 bg-white px-8 py-4 transition-all duration-200 last:border-b-0 hover:bg-violet-50/40"
             >
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
 
               {/* File */}
               <div className="col-span-1 md:col-span-5 flex items-center gap-4">
-                <div className="w-10 h-10 rounded bg-error-container/20 flex items-center justify-center shrink-0">
-                  <span className="material-symbols-outlined text-error">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 transition group-hover:bg-red-100">
+                  <span className="material-symbols-outlined text-red-500">
                     picture_as_pdf
                   </span>
                 </div>
 
                 <div className="min-w-0">
-                  <p className="font-body-md text-body-md text-on-surface truncate font-medium">
+                  <p className="truncate text-[15px] font-semibold text-gray-900">
                     {doc.file_name}
                   </p>
 
-                  <p className="md:hidden font-body-sm text-body-sm text-on-surface-variant mt-1">
+                  <p className="md:hidden mt-1 text-xs text-gray-400">
                     {new Date(doc.created_at).toLocaleDateString("id-ID")}
                   </p>
                 </div>
               </div>
 
               {/* Date */}
-              <div className="hidden md:block col-span-2 font-body-sm text-body-sm text-on-surface-variant">
+              <div className="hidden md:block col-span-2 text-sm text-gray-500">
                 {new Date(doc.created_at).toLocaleDateString("id-ID")}
               </div>
 
               {/* Size */}
-              <div className="hidden md:block col-span-2 font-body-sm text-body-sm text-on-surface-variant">
+              <div className="hidden md:block col-span-2 text-sm text-gray-400">
                 -
               </div>
 
               {/* Status */}
               <div className="col-span-1">
                 <span
-                  className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium ${doc.status === "ready"
-                    ? "bg-green-500/10 text-green-400 border border-green-400/20"
-                    : "bg-yellow-500/10 text-yellow-400 border border-yellow-400/20"
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold ${doc.status === "ready"
+                    ? "border border-green-100 bg-green-50 text-green-600"
+                    : "border border-amber-100 bg-amber-50 text-amber-600"
                     }`}
                 >
                   <span
-                    className={`w-2 h-2 rounded-full ${doc.status === "ready"
-                      ? "bg-green-400"
-                      : "bg-yellow-400"
+                    className={`h-1.5 w-1.5 rounded-full ${doc.status === "ready"
+                      ? "bg-green-500"
+                      : "bg-amber-500"
                       }`}
                   ></span>
 
@@ -251,33 +303,33 @@ export default function DocumentTable({
               </div>
 
               {/* Action */}
-              <div className="col-span-1 md:col-span-2 flex items-center justify-end gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="col-span-1 md:col-span-2 flex items-center justify-end gap-1.5 md:opacity-0 group-hover:opacity-100 transition-opacity">
 
                 <button
                   onClick={() => router.push(`/chat?document=${doc.id}`)}
-                  className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-lg transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition hover:bg-violet-100 hover:text-violet-600"
                   title="Chat with Document"
                 >
-                  <span className="material-symbols-outlined text-[20px]">
+                  <span className="material-symbols-outlined text-[19px]">
                     chat_bubble
                   </span>
                 </button>
 
                 <button
-                  className="p-2 text-on-surface-variant hover:text-tertiary hover:bg-tertiary/10 rounded-lg transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition hover:bg-violet-100 hover:text-violet-600"
                   title="Generate Quiz"
                 >
-                  <span className="material-symbols-outlined text-[20px]">
+                  <span className="material-symbols-outlined text-[19px]">
                     psychology
                   </span>
                 </button>
 
                 <button
                   onClick={() => handleDelete(doc.id)}
-                  className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-colors"
+                  className="flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition hover:bg-red-100 hover:text-red-600"
                   title="Delete"
                 >
-                  <span className="material-symbols-outlined text-[20px]">
+                  <span className="material-symbols-outlined text-[19px]">
                     delete
                   </span>
                 </button>
@@ -286,50 +338,6 @@ export default function DocumentTable({
             </div>
           ))
         )}
-        {/*
-        <div className="group grid grid-cols-1 md:grid-cols-12 gap-4 items-center px-6 py-4 bg-[rgba(19,27,46,0.4)] backdrop-blur-[20px] border border-outline-variant/20 rounded-xl hover:border-primary/30 transition-all duration-200 relative overflow-hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-tertiary opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          <div className="col-span-1 md:col-span-5 flex items-center gap-4">
-            <div className="w-10 h-10 rounded bg-error-container/20 flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-error">
-                picture_as_pdf
-              </span>
-            </div>
-            <div className="min-w-0">
-              <p className="font-body-md text-body-md text-on-surface truncate font-medium">
-                Project_Nexus_Technical_Specs.pdf
-              </p>
-              <p className="md:hidden font-body-sm text-body-sm text-on-surface-variant mt-1">
-                Oct 25, 2024 • 15.1 MB
-              </p>
-            </div>
-          </div>
-          <div className="hidden md:block col-span-2 font-body-sm text-body-sm text-on-surface-variant">
-            Oct 25, 2024
-          </div>
-          <div className="hidden md:block col-span-2 font-body-sm text-body-sm text-on-surface-variant">
-            15.1 MB
-          </div>
-          <div className="col-span-1">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-tertiary-container/10 text-tertiary border border-tertiary/20 rounded-full font-label-caps text-label-caps w-max">
-              <span className="material-symbols-outlined text-[12px] animate-spin">
-                sync
-              </span>
-              Indexing...
-            </span>
-          </div>
-          <div className="col-span-1 md:col-span-2 flex items-center justify-end gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
-            <button
-              className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-lg transition-colors"
-              title="Cancel/Delete"
-            >
-              <span className="material-symbols-outlined text-[20px]">
-                close
-              </span>
-            </button>
-          </div>
-        </div>
-        */}
       </div>
     </section>
   );

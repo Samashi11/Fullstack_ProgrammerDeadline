@@ -1,59 +1,65 @@
 const stats = [
   {
     title: "Documents",
-    value: "5",
+    value: "12",
     icon: "description",
-    color: "emerald",
   },
   {
     title: "Quizzes",
-    value: "0",
+    value: "28",
     icon: "quiz",
-    color: "cyan",
   },
   {
     title: "Best Score",
-    value: "--",
+    value: "92%",
     icon: "workspace_premium",
-    color: "amber",
   },
   {
     title: "AI Status",
     value: "Ready",
     icon: "psychology",
-    color: "emerald",
   },
 ];
 
 export default function QuizStats() {
   return (
-    <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-      {stats.map((stat, index) => (
-        <div
-          key={index}
-          className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-6 hover:border-emerald-500/30 hover:-translate-y-1 transition-all duration-300"
-        >
-          <div className="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-emerald-500/10 blur-3xl group-hover:bg-emerald-500/20 transition-all"></div>
+    <section className="grid grid-cols-2 lg:grid-cols-4 gap-4">
 
-          <div className="relative flex items-center justify-between">
+      {stats.map((stat) => (
+
+        <div
+          key={stat.title}
+          className="rounded-xl border border-gray-200 bg-white p-5"
+        >
+
+          <div className="flex items-center justify-between">
+
             <div>
-              <p className="text-zinc-400 text-sm">
+
+              <p className="text-sm text-gray-500">
                 {stat.title}
               </p>
 
-              <h2 className="mt-3 text-4xl font-bold text-white">
+              <h2 className="mt-2 text-2xl font-semibold text-gray-900">
                 {stat.value}
               </h2>
+
             </div>
 
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-              <span className="material-symbols-outlined text-emerald-400 text-3xl">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100">
+
+              <span className="material-symbols-outlined text-violet-600">
                 {stat.icon}
               </span>
+
             </div>
+
           </div>
+
         </div>
+
       ))}
+
     </section>
   );
 }

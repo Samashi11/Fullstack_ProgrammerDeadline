@@ -3,20 +3,28 @@
 import { useEffect, useState } from "react";
 import api from "@/app/lib/api";
 import { useAuth } from "@/app/hooks/useAuth";
-import LogoutButton from "../../../app/components/logout/LogoutButton";
+import HeroSection from "@/app/components/dashboard/HeroSection";
+import QuickActions from "@/app/components/dashboard/QuickActions";
+import KnowledgeOverview from "@/app/components/dashboard/KnowledgeOverview";
+import DashboardContent from "@/app/components/dashboard/DashboardContent";
 
 import Sidebar from "../../../app/components/Sidebar";
-import Header from "../../../app/components/Header";
-import StatGrid from "../../components/StatGrid";
-import RecentActivity from "../../../app/components/RecentActivity";
-import PinnedSection from "../../../app/components/PinnedSection";
-import ActivityChart from "../../../app/components/ActivityChart";
 import MobileNavbar from "../../../app/components/MobileNavbar";
 
 export default function DashboardPage() {
   useAuth();
   const [userData, setUserData] = useState<any>(null);
   const [search, setSearch] = useState("");
+  const [documents, setDocuments] = useState<any[]>([]);
+
+  const fetchDocuments = async () => {
+    try {
+      const res = await api.get("/api/documents");
+      setDocuments(res.data.documents ?? []);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -24,49 +32,41 @@ export default function DashboardPage() {
         const res = await api.get("/api/auth/me");
         setUserData(res.data);
       } catch (err) {
-        console.error("Unauthorized", err);
+        console.error(err);
       }
     };
+
     fetchUser();
+    fetchDocuments();
   }, []);
 
   return (
     <div className="bg-background text-on-background font-body-md min-h-screen flex selection:bg-primary-container selection:text-white relative">
       {/* Grid Overlay menggunakan Inline Styles */}
       <div
-        className="fixed inset-0 pointer-events-none z-[-1]"
+        className="fixed inset-0 -z-10"
         style={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(16, 185, 129, 0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(16, 185, 129, 0.05) 1px, transparent 1px)
-          `,
-          backgroundSize: "40px 40px",
+          background: `
+            radial-gradient(circle at top right, rgba(139,92,246,.08), transparent 35%),
+            radial-gradient(circle at bottom left, rgba(99,102,241,.06), transparent 30%),
+            #f8fafc
+        `,
         }}
       />
 
       {/* Sidebar Navigation */}
       <Sidebar />
 
+      {/* Main Content Container */}
+      <main className="flex-1 md:ml-[280px] px-10 pt-8 pb-8">
+        <div className="space-y-8">       
+          <HeroSection userData={userData} />
 
-      {/* Main Content Content Container */}
-      <main className="flex-1 md:ml-[280px] p-6 md:p-xl max-w-container_max mx-auto w-full mb-16 md:mb-0">
-        <Header
-          logoutComponent={<LogoutButton />}
-          search={search}
-          setSearch={setSearch}
-        />
+          <QuickActions />
 
-        <StatGrid />
+          <KnowledgeOverview documents={documents} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 flex flex-col gap-6">
-            <RecentActivity />
-          </div>
-
-          <div className="lg:col-span-1 flex flex-col gap-6">
-            <PinnedSection />
-            <ActivityChart />
-          </div>
+          <DashboardContent documents={documents} />
         </div>
       </main>
 

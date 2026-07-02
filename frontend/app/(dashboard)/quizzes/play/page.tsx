@@ -3,11 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import Sidebar from "@/app/components/Sidebar";
-import QuizHeader from "@/app/components/QuizHeader";
-import QuizProgress from "@/app/components/QuizProgress";
-import QuizQuestion from "@/app/components/QuizQuestion";
-import QuizNavigation from "@/app/components/QuizNavigation";
+import QuizLayout from "@/app/components/QuizLayout";
 
 import type {
     GeneratedQuiz,
@@ -15,17 +11,22 @@ import type {
 } from "@/app/types/quiz";
 
 export default function QuizPlayPage() {
+
     const router = useRouter();
 
-    const [quiz, setQuiz] = useState<GeneratedQuiz | null>(null);
+    const [quiz, setQuiz] =
+        useState<GeneratedQuiz | null>(null);
 
-    const [currentQuestion, setCurrentQuestion] = useState(0);
+    const [currentQuestion, setCurrentQuestion] =
+        useState(0);
 
-    const [answers, setAnswers] = useState<number[]>([]);
+    const [answers, setAnswers] =
+        useState<number[]>([]);
 
     useEffect(() => {
 
-        const storedQuiz = localStorage.getItem("generatedQuiz");
+        const storedQuiz =
+            localStorage.getItem("generatedQuiz");
 
         if (!storedQuiz) {
 
@@ -44,9 +45,7 @@ export default function QuizPlayPage() {
 
             setQuiz(JSON.parse(cleanQuiz));
 
-        } catch (error) {
-
-            console.error(error);
+        } catch {
 
             router.push("/quizzes");
 
@@ -58,13 +57,13 @@ export default function QuizPlayPage() {
 
         return (
 
-            <div className="flex h-screen items-center justify-center bg-background">
+            <div className="flex h-screen items-center justify-center bg-gray-100">
 
-                <div className="flex flex-col items-center gap-5">
+                <div className="flex flex-col items-center gap-4">
 
-                    <div className="h-16 w-16 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent"></div>
+                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-600 border-t-transparent"></div>
 
-                    <p className="text-zinc-400">
+                    <p className="text-gray-500">
 
                         Preparing your AI Quiz...
 
@@ -77,14 +76,12 @@ export default function QuizPlayPage() {
         );
 
     }
-
     const submitQuiz = () => {
 
-        const unanswered = quiz.questions.filter(
-
-            (_, index) => answers[index] === undefined
-
-        ).length;
+        const unanswered =
+            quiz.questions.filter(
+                (_, index) => answers[index] === undefined
+            ).length;
 
         if (unanswered > 0) {
 
@@ -108,7 +105,9 @@ export default function QuizPlayPage() {
 
         const result: QuizResult = {
 
-            score: Math.round((correct / quiz.questions.length) * 100),
+            score: Math.round(
+                (correct / quiz.questions.length) * 100
+            ),
 
             correct,
 
@@ -121,11 +120,8 @@ export default function QuizPlayPage() {
         };
 
         localStorage.setItem(
-
             "quizResult",
-
             JSON.stringify(result)
-
         );
 
         router.push("/quizzes/result");
@@ -134,46 +130,25 @@ export default function QuizPlayPage() {
 
     return (
 
-        <div className="flex h-screen overflow-hidden bg-background text-on-background">
+    <div className="min-h-screen bg-[#f3f3f3]">
 
-            <Sidebar />
-
-            <main className="grid-background flex-1 overflow-y-auto md:ml-[280px]">
-
-                <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-8 py-10">
-
-                    <QuizHeader
-                        quiz={{
-                            title: quiz.title,
-                            documentName: "AI Generated Quiz",
-                            difficulty: "Medium",
-                            questionCount: quiz.questions.length,
-                            estimatedTime: quiz.questions.length,
-                        }}
-                    />
-
-                    <QuizProgress
-                        currentQuestion={currentQuestion + 1}
-                        totalQuestions={quiz.questions.length}
-                    />
-
-                    <QuizQuestion
-                        question={quiz.questions[currentQuestion]}
-                        selectedAnswer={answers[currentQuestion] ?? null}
+        <main className="mx-auto w-full max-w-[1700px] p-4">
+                    <QuizLayout
+                        title={quiz.title}
+                        documentName={quiz.documentName}
+                        questions={quiz.questions}
+                        currentQuestion={currentQuestion}
+                        answers={answers}
                         onSelectAnswer={(answer) => {
 
-                            const updatedAnswers = [...answers];
+                            const updated = [...answers];
 
-                            updatedAnswers[currentQuestion] = answer;
+                            updated[currentQuestion] = answer;
 
-                            setAnswers(updatedAnswers);
+                            setAnswers(updated);
 
                         }}
-                    />
-
-                    <QuizNavigation
-                        currentQuestion={currentQuestion}
-                        totalQuestions={quiz.questions.length}
+                        onJumpQuestion={(index) => setCurrentQuestion(index)}
                         onPrevious={() => {
 
                             if (currentQuestion > 0) {
@@ -185,13 +160,7 @@ export default function QuizPlayPage() {
                         }}
                         onNext={() => {
 
-                            if (
-
-                                currentQuestion ===
-
-                                quiz.questions.length - 1
-
-                            ) {
+                            if (currentQuestion === quiz.questions.length - 1) {
 
                                 submitQuiz();
 
@@ -204,11 +173,9 @@ export default function QuizPlayPage() {
                         }}
                     />
 
-                </div>
+                        </main>
 
-            </main>
-
-        </div>
+    </div>
 
     );
 

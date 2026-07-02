@@ -8,23 +8,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "#0b1326",
-        surface: "#171f33",
+        background: "#f8fafc",
+        surface: "#ffffff",
+        primary: "#7c3aed",
+        
+        violet: {
+          50: "#f5f3ff",
+          100: "#ede9fe",
+          200: "#ddd6fe",
+          300: "#c4b5fd",
+          400: "#a78bfa",
+          500: "#8b5cf6",
+          600: "#7c3aed",
+          700: "#6d28d9",
+        },
+        "primary-container": "#ede9fe",
+        "on-background": "#111827",
+        "on-surface": "#111827",
+        "on-surface-variant": "#6b7280",
 
-        primary: "#4edea3",
-        "primary-container": "#10b981",
+        outline: "#d1d5db",
 
-        "on-background": "#dae2fd",
-        "on-surface": "#dae2fd",
-        "on-surface-variant": "#bbcabf",
+        "outline-variant": "#e5e7eb",
+        "surface-container": "#ffffff",
+        "surface-container-low": "#f9fafb",
+        "surface-container-high": "#f3f4f6",
+        "surface-container-highest": "#eef2ff",
 
-        outline: "#86948a",
-        "outline-variant": "#3c4a42",
-
-        "surface-container": "#171f33",
-        "surface-container-low": "#131b2e",
-        "surface-container-high": "#222a3d",
-        "surface-container-highest": "#2d3449",
       },
 
       spacing: {
@@ -34,12 +44,15 @@ const config: Config = {
         lg: "24px",
         xl: "40px",
         "2xl": "64px",
-        gutter: "24px",
+        gutter: "32px",
         "container-max": "1440px",
       },
 
       fontFamily: {
         body: ["Inter", "sans-serif"],
+
+        display: ["Space Grotesk", "sans-serif"],
+
         h1: ["Space Grotesk", "sans-serif"],
         h2: ["Space Grotesk", "sans-serif"],
         h3: ["Space Grotesk", "sans-serif"],
@@ -97,10 +110,18 @@ const config: Config = {
       },
 
       borderRadius: {
-        DEFAULT: "0.125rem",
-        lg: "0.25rem",
-        xl: "0.5rem",
+        sm: "0.5rem",
+        DEFAULT: "0.75rem",
+        lg: "1rem",
+        xl: "1.25rem",
+        "2xl": "1.5rem",
+        "3xl": "2rem",
         full: "9999px",
+      },
+
+      boxShadow: {
+        card: "0 8px 30px rgba(15,23,42,.06)",
+        floating: "0 16px 48px rgba(15,23,42,.10)",
       },
 
       maxWidth: {

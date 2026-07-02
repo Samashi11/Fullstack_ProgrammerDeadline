@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import api from "@/app/lib/api";
 import { useAuth } from "@/app/hooks/useAuth";
-import LogoutButton from "../../../app/components/logout/LogoutButton";
+
 // Sub-komponen dideklarasikan di bawah untuk menjaga kode tetap modular dan readable
 import Sidebar from "../../../app/components/Sidebar";
 import Header from "../../../app/components/Header";
@@ -27,25 +27,50 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="bg-background text-on-background flex h-screen overflow-hidden selection:bg-primary-container selection:text-on-primary-container">
-      {/* Sidebar - Ditambahkan LogoutButton di dalamnya secara strategis */}
-      <Sidebar />
 
-      {/* Main Content Area */}
-      <main className="flex-1 md:ml-[280px] flex flex-col h-screen relative bg-gradient-to-br from-background via-surface-dim to-background">
-        <Header
-          logoutComponent={<LogoutButton />}
-          search={search}
-          setSearch={setSearch}
-        />
-        {/* Scrollable Content Canvas */}
-        <div className="flex-1 overflow-y-auto p-gutter custom-scrollbar">
-          <div className="max-w-container_max mx-auto space-y-xl pb-2xl">
-            <Dropzone />
-            <DocumentTable search={search} />
-          </div>
-        </div>
-      </main>
+    <div className="flex h-screen bg-gray-50">
+
+        <Sidebar />
+
+        <main className="relative flex flex-1 flex-col md:ml-[280px]">
+
+            <div
+                className="pointer-events-none fixed inset-0 -z-10"
+                style={{
+                    background: `
+                        radial-gradient(circle at top right, rgba(139,92,246,.07), transparent 35%),
+                        radial-gradient(circle at bottom left, rgba(99,102,241,.05), transparent 30%),
+                        #f8fafc
+                    `,
+                }}
+            />
+
+            <Header
+                search={search}
+                setSearch={setSearch}
+            />
+
+            <div className="flex-1 overflow-y-auto px-10 py-8">
+
+                <div className="mx-auto max-w-7xl">
+
+                    <Dropzone />
+
+                    <div className="mt-10">
+
+                        <DocumentTable
+                            search={search}
+                        />
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
     </div>
-  );
+
+);
 }

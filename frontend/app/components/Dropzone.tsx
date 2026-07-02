@@ -124,8 +124,9 @@ export default function Dropzone() {
   };
 
   return (
-    <section className="mb-2xl">
-      {/* Hidden Input */}
+
+    <section className="mb-10">
+
       <input
         ref={fileInputRef}
         type="file"
@@ -135,100 +136,252 @@ export default function Dropzone() {
       />
 
       <div
-        className={`glass-panel rounded-xl border-2 border-dashed p-2xl flex flex-col items-center justify-center gap-lg transition-all duration-300 group cursor-pointer emerald-glow relative overflow-hidden ${isDragging
-          ? "border-primary bg-primary/5"
-          : success
-            ? "border-green-500 bg-green-500/5"
-            : "border-white/20 hover:border-primary/50"
-          }`}
         onClick={() => !uploading && fileInputRef.current?.click()}
         onDragEnter={handleDragIn}
         onDragLeave={handleDragOut}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-      >
-        {/* Background Hover Effect */}
-        <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+        className={`relative flex min-h-[300px] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-[32px] border-2 border-dashed bg-white px-8 py-14 text-center shadow-[0_8px_30px_rgba(15,23,42,.04)] transition-all duration-300
 
-        {/* Icon */}
+            ${isDragging
+            ? "scale-[1.01] border-violet-500 bg-violet-50/70"
+            : success
+              ? "border-green-400 bg-green-50/60"
+              : "border-gray-200 hover:border-violet-300 hover:bg-violet-50/40"
+          }`}
+      >
+
+        {/* Ambient accent blobs */}
+        <div className="pointer-events-none absolute -left-16 -top-16 h-56 w-56 rounded-full bg-violet-100/60 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-20 -right-10 h-56 w-56 rounded-full bg-indigo-100/50 blur-3xl" />
+
+        {/* ICON */}
+
         <div
-          className={`w-20 h-20 rounded-full flex items-center justify-center transition-all duration-500 ${success
-            ? "bg-green-500/20 text-green-400 scale-110"
-            : uploading
-              ? "bg-blue-500/20 text-blue-400"
-              : "bg-primary/10 text-primary group-hover:scale-110"
+          className={`relative z-10 mb-7 flex h-24 w-24 items-center justify-center rounded-full shadow-inner transition-all duration-300
+
+                ${uploading
+              ? "bg-gradient-to-br from-violet-100 to-violet-200"
+              : success
+                ? "bg-gradient-to-br from-green-100 to-green-200"
+                : "bg-gradient-to-br from-violet-100 to-indigo-100"
             }`}
         >
+
           {uploading ? (
-            <span className="material-symbols-outlined text-4xl animate-spin">
+
+            <span className="material-symbols-outlined animate-spin text-[42px] text-violet-600">
+
               progress_activity
+
             </span>
+
           ) : success ? (
-            <span className="material-symbols-outlined text-5xl animate-bounce">
+
+            <span className="material-symbols-outlined text-[44px] text-green-600">
+
               check_circle
+
             </span>
+
           ) : (
-            <span className="material-symbols-outlined text-4xl">
+
+            <span className="material-symbols-outlined text-[42px] text-violet-600">
+
               upload_file
+
             </span>
+
           )}
+
         </div>
 
-        {/* Title */}
-        <div className="text-center z-10">
-          <h3 className="font-h3 text-h3 text-on-surface mb-xs">
+        {/* TITLE */}
+
+        <div className="relative z-10 text-center">
+
+          <h2 className="text-2xl font-bold tracking-tight text-gray-900">
+
             {uploading
-              ? "Uploading..."
+              ? "Uploading Document..."
               : success
                 ? "Upload Successful!"
-                : "Drag & Drop your PDFs here"}
-          </h3>
+                : "Upload PDF Documents"}
 
-          <p className="font-body-md text-body-md text-on-surface-variant">
+          </h2>
+
+          <p className="mt-3 max-w-xl text-[15px] leading-7 text-gray-500">
+
             {uploading ? (
-              "Mohon tunggu sebentar..."
+
+              "AI sedang mengindeks dokumen Anda..."
+
             ) : success ? (
-              "File siap untuk dianalisis AI"
+
+              "Dokumen berhasil diunggah dan siap digunakan."
+
             ) : (
+
               <>
-                atau{" "}
-                <span className="text-primary underline decoration-primary/30 underline-offset-4">
-                  klik untuk membuka File Explorer
+                Drag & Drop file PDF ke area ini atau{" "}
+
+                <span className="font-semibold text-violet-600 underline underline-offset-4">
+
+                  klik untuk memilih file
+
                 </span>
+
               </>
+
             )}
+
           </p>
+
         </div>
 
-        {/* File Info */}
+        {/* FILE INFO */}
+
         {file && (
-          <div className="text-center">
-            <p className="text-primary font-semibold">📄 {file.name}</p>
 
-            <p className="text-sm text-on-surface-variant">
-              {(file.size / 1024 / 1024).toFixed(2)} MB
-            </p>
+          <div className="relative z-10 mt-7 flex items-center gap-3 rounded-2xl border border-violet-100 bg-white px-5 py-3 shadow-sm">
+
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-violet-100">
+              <span className="material-symbols-outlined text-[20px] text-violet-600">
+
+                picture_as_pdf
+
+              </span>
+            </div>
+
+            <div className="text-left">
+
+              <p className="text-sm font-semibold text-gray-900">
+
+                {file.name}
+
+              </p>
+
+              <p className="text-xs text-gray-500">
+
+                {(file.size / 1024 / 1024).toFixed(2)} MB
+
+              </p>
+
+            </div>
+
           </div>
+
         )}
 
-        {/* Success Message */}
+        {/* SUCCESS */}
+
         {success && (
-          <div className="text-center animate-pulse">
-            <p className="text-green-400 font-semibold text-lg">
-              ✅ Upload berhasil!
+
+          <div className="relative z-10 mt-7 rounded-2xl border border-green-200 bg-white px-6 py-5 text-center shadow-sm">
+
+            <div className="mb-2 flex justify-center">
+
+              <span className="material-symbols-outlined text-[38px] text-green-600">
+
+                task_alt
+
+              </span>
+
+            </div>
+
+            <h3 className="text-base font-bold text-green-700">
+
+              Upload Berhasil
+
+            </h3>
+
+            <p className="mt-1 text-sm text-green-600">
+
+              Dokumen telah berhasil diindeks dan siap digunakan oleh AI.
+
             </p>
 
-            <p className="text-sm text-green-300/80">
-              Dokumen siap diproses AI
-            </p>
           </div>
+
         )}
 
-        {/* Footer */}
-        <p className="font-label-caps text-label-caps text-outline-variant tracking-widest mt-md">
-          MAX FILE SIZE 10MB
-        </p>
+        {/* LOADING */}
+
+        {uploading && (
+
+          <div className="relative z-10 mt-7 w-full max-w-md">
+
+            <div className="mb-2 flex justify-between text-xs font-medium">
+
+              <span className="text-gray-500">
+
+                Mengunggah...
+
+              </span>
+
+              <span className="text-violet-600">
+
+                Processing
+
+              </span>
+
+            </div>
+
+            <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+
+              <div className="h-full w-full animate-pulse rounded-full bg-gradient-to-r from-violet-500 to-indigo-500" />
+
+            </div>
+
+          </div>
+
+        )}
+
+        {/* FOOTER */}
+
+        <div className="relative z-10 mt-9 flex flex-wrap items-center justify-center gap-3">
+
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-600 shadow-sm">
+
+            <span className="material-symbols-outlined text-[16px] text-violet-600">
+
+              verified
+
+            </span>
+
+            PDF Only
+
+          </span>
+
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-600 shadow-sm">
+
+            <span className="material-symbols-outlined text-[16px] text-violet-600">
+
+              cloud_upload
+
+            </span>
+
+            Max 10 MB
+
+          </span>
+
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 bg-white px-3.5 py-1.5 text-xs font-semibold text-gray-600 shadow-sm">
+
+            <span className="material-symbols-outlined text-[16px] text-violet-600">
+
+              auto_awesome
+
+            </span>
+
+            AI Ready
+
+          </span>
+
+        </div>
+
       </div>
+
     </section>
+
   );
 }

@@ -11,7 +11,7 @@ interface Document {
 
 type Difficulty = "Easy" | "Medium" | "Hard";
 
-export default function QuizGenerator() {
+export default function QuizGeneratorV2() {
     const router = useRouter();
 
     const [documents, setDocuments] = useState<Document[]>([]);
@@ -27,282 +27,184 @@ export default function QuizGenerator() {
         useState(false);
 
     useEffect(() => {
-
         fetchDocuments();
-
     }, []);
 
     const fetchDocuments = async () => {
-
         try {
-
             const token =
                 localStorage.getItem("token");
 
-            const response =
-                await axios.get(
-                    "http://localhost:3001/api/documents",
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
-
-            setDocuments(
-                response.data.documents
+            const res = await axios.get(
+                "http://localhost:3001/api/documents",
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                }
             );
 
-        } catch (error) {
-
-            console.error(error);
-
+            setDocuments(res.data.documents);
+        } catch (err) {
+            console.error(err);
         }
-
     };
 
     const generateQuiz = async () => {
-
         if (!selectedDocument) {
-
-            alert(
-                "Please select a document first."
-            );
-
+            alert("Select a mission first.");
             return;
-
         }
 
         try {
-
             setLoading(true);
 
             const token =
                 localStorage.getItem("token");
 
-            const response =
-                await axios.post(
-                    "http://localhost:3001/api/quizzes/generate",
-                    {
-                        documentId:
-                            selectedDocument,
-                        difficulty,
-                        questionCount,
+            const res = await axios.post(
+                "http://localhost:3001/api/quizzes/generate",
+                {
+                    documentId: selectedDocument,
+                    difficulty,
+                    questionCount,
+                },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
                     },
-                    {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    }
-                );
+                }
+            );
 
             localStorage.setItem(
                 "generatedQuiz",
-                response.data.quiz
+                res.data.quiz
             );
 
-            router.push(
-                "/quizzes/play"
-            );
-
-        } catch (error) {
-
-            console.error(error);
-
-            alert(
-                "Failed to generate quiz."
-            );
-
+            router.push("/quizzes/play");
+        } catch (err) {
+            console.error(err);
+            alert("Generate quiz failed.");
         } finally {
-
             setLoading(false);
-
         }
-
     };
 
-    return (
+            return (
+            <section className="rounded-2xl border border-gray-200 bg-white shadow-sm">
 
-        <section className="relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl">
+                {/* Header */}
 
-            <div className="absolute -top-24 -right-24 h-72 w-72 rounded-full bg-emerald-500/10 blur-3xl" />
+                <div className="border-b border-gray-100 px-6 py-6">
 
-            <div className="relative p-8">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        Quiz Configuration
+                    </h2>
 
-                <div className="flex items-center gap-4">
-
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-
-                        <span className="material-symbols-outlined text-4xl text-emerald-400">
-
-                            auto_awesome
-
-                        </span>
-
-                    </div>
-
-                    <div>
-
-                        <h2 className="text-3xl font-bold text-white">
-
-                            AI Quiz Generator
-
-                        </h2>
-
-                        <p className="mt-1 text-zinc-400">
-
-                            Generate intelligent quizzes from your uploaded documents.
-
-                        </p>
-
-                    </div>
+                    <p className="mt-2 text-sm text-gray-500">
+                        Choose your document and customize your quiz settings.
+                    </p>
 
                 </div>
 
-                <div className="mt-10 grid gap-8 lg:grid-cols-2">
+                {/* Body */}
+
+                <div className="space-y-6 p-6">
+
+                    {/* Document */}
 
                     <div>
 
-                        <label className="mb-3 flex items-center gap-2 text-sm text-zinc-400">
-
-                            <span className="material-symbols-outlined text-lg">
-
-                                description
-
-                            </span>
-
+                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-500">
                             Document
-
                         </label>
 
-                        <select
-                            value={selectedDocument}
-                            onChange={(e) =>
-                                setSelectedDocument(
-                                    e.target.value
-                                )
-                            }
-                            className="w-full rounded-2xl border border-white/10 bg-black/20 px-5 py-4 text-white outline-none transition focus:border-emerald-500"
-                        >
+                        <div className="relative">
 
-                            <option value="">
+                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                                description
+                            </span>
 
-                                Select Document
+                            <select
+                                value={selectedDocument}
+                                onChange={(e) => setSelectedDocument(e.target.value)}
+                                className="h-12 w-full rounded-xl border border-gray-300 bg-white pl-10 pr-4 text-sm text-gray-700 outline-none transition focus:border-violet-500 focus:ring-2 focus:ring-violet-200"
+                            >
 
-                            </option>
-
-                            {documents.map((doc) => (
-
-                                <option
-                                    key={doc.id}
-                                    value={doc.id}
-                                >
-
-                                    {doc.title}
-
+                                <option value="">
+                                    Select document...
                                 </option>
+
+                                {documents.map((doc) => (
+
+                                    <option
+                                        key={doc.id}
+                                        value={doc.id}
+                                    >
+                                        {doc.title}
+                                    </option>
+
+                                ))}
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    {/* Difficulty */}
+
+                    <div>
+
+                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-500">
+                            Difficulty
+                        </label>
+
+                        <div className="flex gap-2">
+
+                            {(["Easy", "Medium", "Hard"] as Difficulty[]).map((item) => (
+
+                                <button
+                                    key={item}
+                                    type="button"
+                                    onClick={() => setDifficulty(item)}
+                                    className={`flex-1 rounded-xl border py-3 text-sm font-medium transition-all ${
+                                        difficulty === item
+                                            ? "border-violet-600 bg-violet-600 text-white"
+                                            : "border-gray-300 bg-white text-gray-600 hover:border-violet-300"
+                                    }`}
+                                >
+                                    {item}
+                                </button>
 
                             ))}
 
-                        </select>
-
-                    </div>
-
-                    <div>
-
-                        <label className="mb-3 flex items-center gap-2 text-sm text-zinc-400">
-
-                            <span className="material-symbols-outlined text-lg">
-
-                                timer
-
-                            </span>
-
-                            Estimated Time
-
-                        </label>
-
-                        <div className="flex h-[58px] items-center rounded-2xl border border-white/10 bg-black/20 px-5 text-white">
-
-                            {questionCount} Minutes
-
                         </div>
 
                     </div>
-                    <div>
-
-                        <label className="mb-3 flex items-center gap-2 text-sm text-zinc-400">
-
-                            <span className="material-symbols-outlined text-lg">
-
-                                military_tech
-
-                            </span>
-
-                            Difficulty
-
-                        </label>
-
-                        <div className="grid grid-cols-3 gap-3">
-
-                            {(["Easy", "Medium", "Hard"] as Difficulty[]).map(
-                                (item) => (
-
-                                    <button
-                                        key={item}
-                                        type="button"
-                                        onClick={() =>
-                                            setDifficulty(item)
-                                        }
-                                        className={`rounded-2xl border px-5 py-4 font-semibold transition-all duration-300 ${difficulty === item
-                                                ? "border-emerald-500 bg-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,.35)]"
-                                                : "border-white/10 bg-black/20 text-zinc-400 hover:border-emerald-500/50 hover:text-white"
-                                            }`}
-                                    >
-
-                                        {item}
-
-                                    </button>
-
-                                )
-                            )}
-
-                        </div>
-
-                    </div>
+                                        {/* Number of Questions */}
 
                     <div>
 
-                        <label className="mb-3 flex items-center gap-2 text-sm text-zinc-400">
-
-                            <span className="material-symbols-outlined text-lg">
-
-                                quiz
-
-                            </span>
-
+                        <label className="mb-2 block text-xs font-semibold uppercase tracking-wide text-gray-500">
                             Number of Questions
-
                         </label>
 
-                        <div className="grid grid-cols-3 gap-3">
+                        <div className="flex gap-2">
 
                             {[5, 10, 20].map((count) => (
 
                                 <button
                                     key={count}
                                     type="button"
-                                    onClick={() =>
-                                        setQuestionCount(count)
-                                    }
-                                    className={`rounded-2xl border px-5 py-4 text-lg font-bold transition-all duration-300 ${questionCount === count
-                                            ? "border-emerald-500 bg-emerald-500 text-white shadow-[0_0_25px_rgba(16,185,129,.35)]"
-                                            : "border-white/10 bg-black/20 text-zinc-400 hover:border-emerald-500/50 hover:text-white"
-                                        }`}
+                                    onClick={() => setQuestionCount(count)}
+                                    className={`flex-1 rounded-xl border py-3 text-sm font-medium transition-all ${
+                                        questionCount === count
+                                            ? "border-violet-600 bg-violet-600 text-white"
+                                            : "border-gray-300 bg-white text-gray-600 hover:border-violet-300"
+                                    }`}
                                 >
-
                                     {count}
-
                                 </button>
 
                             ))}
@@ -311,86 +213,24 @@ export default function QuizGenerator() {
 
                     </div>
 
-                </div>
+                    {/* Generate */}
 
-                <div className="mt-10 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-6">
+                    <button
+                        onClick={generateQuiz}
+                        disabled={loading || !selectedDocument}
+                        className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-violet-600 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-violet-700 hover:shadow-lg hover:shadow-violet-300/30 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
 
-                    <div className="flex items-center justify-between">
+                        <span className="material-symbols-outlined text-[18px]">
+                            auto_awesome
+                        </span>
 
-                        <div>
+                        {loading ? "Generating Quiz..." : "Generate AI Quiz"}
 
-                            <p className="text-sm text-zinc-500">
-
-                                Selected Difficulty
-
-                            </p>
-
-                            <h3 className="mt-2 text-2xl font-bold text-white">
-
-                                {difficulty}
-
-                            </h3>
-
-                        </div>
-
-                        <div>
-
-                            <p className="text-sm text-zinc-500">
-
-                                Total Questions
-
-                            </p>
-
-                            <h3 className="mt-2 text-2xl font-bold text-white">
-
-                                {questionCount}
-
-                            </h3>
-
-                        </div>
-
-                    </div>
+                    </button>
 
                 </div>
-                <button
-                    type="button"
-                    onClick={generateQuiz}
-                    disabled={loading}
-                    className="mt-10 flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-cyan-400 px-8 py-5 text-lg font-bold text-white transition-all duration-300 hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-50"
-                >
 
-                    {loading ? (
-
-                        <>
-
-                            <div className="h-6 w-6 animate-spin rounded-full border-2 border-white border-t-transparent" />
-
-                            Generating Quiz...
-
-                        </>
-
-                    ) : (
-
-                        <>
-
-                            <span className="material-symbols-outlined">
-
-                                auto_awesome
-
-                            </span>
-
-                            Generate AI Quiz
-
-                        </>
-
-                    )}
-
-                </button>
-
-            </div>
-
-        </section>
-
-    );
-
+            </section>
+        );
 }

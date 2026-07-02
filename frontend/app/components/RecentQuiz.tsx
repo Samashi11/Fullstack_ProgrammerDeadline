@@ -1,58 +1,110 @@
+const history = [
+  {
+    id: 1,
+    title: "Machine Learning.pdf",
+    score: "92%",
+    questions: 10,
+    date: "Today",
+  },
+  {
+    id: 2,
+    title: "Database.pdf",
+    score: "85%",
+    questions: 20,
+    date: "Yesterday",
+  },
+  {
+    id: 3,
+    title: "Network Security.pdf",
+    score: "100%",
+    questions: 5,
+    date: "2 days ago",
+  },
+];
+
 export default function RecentQuiz() {
   return (
-    <section className="rounded-3xl border border-white/10 bg-white/5 backdrop-blur-xl p-8">
+    <div className="rounded-xl border border-gray-200 bg-white">
 
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between border-b border-gray-200 p-5">
 
         <div>
 
-          <h2 className="text-3xl font-bold text-white">
-            Recent Quizzes
+          <h2 className="text-lg font-semibold text-gray-900">
+            Quiz History
           </h2>
 
-          <p className="text-zinc-400 mt-2">
-            Your latest quiz activities will appear here.
+          <p className="text-sm text-gray-500 mt-1">
+            Your recent quiz attempts.
           </p>
 
         </div>
 
-        <span className="material-symbols-outlined text-emerald-400 text-4xl">
-          history
-        </span>
+      </div>
+
+      <div className="max-h-[470px] divide-y divide-gray-100 overflow-y-auto">
+
+        {history.map((item) => (
+
+          <div
+            key={item.id}
+            className="flex items-start justify-between p-5 transition hover:bg-violet-50"
+          >
+
+            <div className="flex gap-3">
+
+              <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-violet-100">
+
+                <span className="material-symbols-outlined text-violet-600 text-[20px]">
+                  description
+                </span>
+
+              </div>
+
+              <div>
+
+                <h3 className="text-sm font-semibold text-gray-900">
+                  {item.title}
+                </h3>
+
+                <p className="text-xs text-gray-500 mt-1">
+                  {item.questions} Questions • {item.date}
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="text-right">
+
+              <div className="flex justify-end">
+
+  <span className="rounded-full bg-violet-100 px-3 py-1 text-xs font-semibold text-violet-700">
+    {item.score}
+  </span>
+
+</div>
+
+              <button
+  className="mt-3 flex items-center gap-1 text-xs font-medium text-violet-600 hover:text-violet-800 transition"
+>
+
+  <span className="material-symbols-outlined text-[16px]">
+    replay
+  </span>
+
+  Play Again
+
+</button>
+
+            </div>
+
+          </div>
+
+        ))}
 
       </div>
 
-      <div className="flex flex-col items-center justify-center py-16">
-
-        <div className="w-24 h-24 rounded-full bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
-
-          <span className="material-symbols-outlined text-emerald-400 text-5xl">
-            quiz
-          </span>
-
-        </div>
-
-        <h3 className="text-white text-2xl font-semibold mt-8">
-          No Quiz Attempts Yet
-        </h3>
-
-        <p className="text-zinc-400 text-center mt-3 max-w-lg leading-7">
-          Generate your first AI-powered quiz from your uploaded documents.
-          Your quiz history, scores, and progress will appear here.
-        </p>
-
-        <button className="mt-8 px-8 py-4 rounded-2xl bg-emerald-500 hover:bg-emerald-400 transition shadow-[0_0_25px_rgba(16,185,129,.35)] font-semibold flex items-center gap-3">
-
-          <span className="material-symbols-outlined">
-            auto_awesome
-          </span>
-
-          Start First Quiz
-
-        </button>
-
-      </div>
-
-    </section>
+    </div>
   );
 }

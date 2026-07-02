@@ -3,26 +3,26 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import Sidebar from "@/app/components/Sidebar";
-
-import ResultHero from "@/app/components/result/ResultHero";
-import ResultStats from "@/app/components/result/ResultStats";
-import ResultFeedback from "@/app/components/result/ResultFeedback";
-import ResultActions from "@/app/components/result/ResultActions";
-import ResultReview from "@/app/components/result/ResultReview";
+import ResultLayout from "@/app/components/result/ResultLayout";
 
 import type { QuizResult } from "@/app/types/quiz";
 
 export default function QuizResultPage() {
+
     const router = useRouter();
 
-    const [result, setResult] = useState<QuizResult | null>(null);
+    const [result, setResult] =
+        useState<QuizResult | null>(null);
+
+    const [duration, setDuration] =
+        useState("08:34");
 
     useEffect(() => {
 
-        const storedResult = localStorage.getItem("quizResult");
+        const stored =
+            localStorage.getItem("quizResult");
 
-        if (!storedResult) {
+        if (!stored) {
 
             router.push("/quizzes");
 
@@ -32,13 +32,9 @@ export default function QuizResultPage() {
 
         try {
 
-            const parsedResult: QuizResult = JSON.parse(storedResult);
+            setResult(JSON.parse(stored));
 
-            setResult(parsedResult);
-
-        } catch (error) {
-
-            console.error(error);
+        } catch {
 
             router.push("/quizzes");
 
@@ -50,15 +46,15 @@ export default function QuizResultPage() {
 
         return (
 
-            <div className="flex h-screen items-center justify-center bg-background">
+            <div className="flex h-screen items-center justify-center bg-gray-100">
 
-                <div className="flex flex-col items-center gap-5">
+                <div className="flex flex-col items-center gap-4">
 
-                    <div className="h-16 w-16 animate-spin rounded-full border-4 border-emerald-500 border-t-transparent" />
+                    <div className="h-12 w-12 animate-spin rounded-full border-4 border-violet-600 border-t-transparent" />
 
-                    <p className="text-zinc-400">
+                    <p className="text-gray-500">
 
-                        Preparing your AI Report...
+                        Loading Result...
 
                     </p>
 
@@ -72,37 +68,25 @@ export default function QuizResultPage() {
 
     return (
 
-        <div className="flex h-screen bg-background text-white">
+        <div className="bg-[#f3f3f3] p-4">
 
-            <Sidebar />
+            <ResultLayout
+                title={result.quiz.title}
+                documentName="AI Generated Quiz"
+                score={result.score}
+                correct={result.correct}
+                incorrect={
+                    result.total - result.correct
+                }
+                duration={duration}
+                onReview={() => {
 
-            <main className="flex-1 overflow-y-auto md:ml-[280px]">
+                    router.push(
+                        "/quizzes/result/review"
+                    );
 
-                <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-8 py-10">
-
-                    <ResultHero
-                        score={result.score}
-                    />
-
-                    <ResultStats
-                        score={result.score}
-                        correct={result.correct}
-                        total={result.total}
-                    />
-
-                    <ResultFeedback
-                        score={result.score}
-                    />
-
-                    <ResultActions />
-
-                    <ResultReview
-                        result={result}
-                    />
-
-                </div>
-
-            </main>
+                }}
+            />
 
         </div>
 

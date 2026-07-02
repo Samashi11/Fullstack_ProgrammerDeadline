@@ -3,226 +3,386 @@
 import { useEffect, useState, useRef } from "react";
 import api from "@/app/lib/api";
 import { useAuth } from "@/app/hooks/useAuth";
-import LogoutButton from "../../../app/components/logout/LogoutButton";
 
 import Sidebar from "../../components/Sidebar";
-import ChatHeader from "../../components/ChatHeader";
 import ChatMessage from "../../components/ChatMessage";
 import ChatInput from "../../components/ChatInput";
 
 interface Message {
-  type: "user" | "ai";
-  content: string;
+    type: "user" | "ai";
+    content: string;
 }
 
 export default function ChatPage() {
 
-  useAuth();
+    useAuth();
 
-  const [userData, setUserData] = useState<any>(null);
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [totalDocuments, setTotalDocuments] = useState(0);
+    const [documents, setDocuments] = useState<any[]>([]);
 
-  const bottomRef = useRef<HTMLDivElement>(null);
+    const [selectedDocument, setSelectedDocument] = useState("");
 
-  const handleSend = async (query: string) => {
-    console.log("CHATPAGE:", query);
+    const [messages, setMessages] =
+        useState<Message[]>([]);
 
-    setMessages((prev) => [
-      ...prev,
-      {
-        type: "user",
-        content: query,
-      },
-    ]);
+    const [loading, setLoading] =
+        useState(false);
 
-    setLoading(true);
+    const [totalDocuments, setTotalDocuments] =
+        useState(0);
 
-    try {
-      console.log("Mengirim request...");
+    const bottomRef =
+        useRef<HTMLDivElement>(null);
 
-      const res = await api.post("/api/chat", {
-        query,
-      });
+    const handleSend = async (query: string) => {
 
-      console.log("Response Backend:", res.data);
+        if (!query.trim()) return;
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "ai",
-          content: res.data.answer,
-        },
-      ]);
-      setLoading(false);
-    } catch (err) {
+        setMessages((prev) => [
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          type: "ai",
-          content: "❌ Terjadi kesalahan saat menghubungi AI."
+            ...prev,
+
+            {
+                type: "user",
+                content: query,
+            },
+
+        ]);
+
+        setLoading(true);
+
+        try {
+
+            const res = await api.post("/api/chat", {
+                query,
+                documentId: selectedDocument,
+            });
+
+            setMessages((prev) => [
+
+                ...prev,
+
+                {
+                    type: "ai",
+                    content: res.data.answer,
+                },
+
+            ]);
+
+        } catch {
+
+            setMessages((prev) => [
+
+                ...prev,
+
+                {
+                    type: "ai",
+                    content:
+                        "❌ Terjadi kesalahan saat menghubungi AI.",
+                },
+
+            ]);
+
+        } finally {
+
+            setLoading(false);
+
         }
-      ])
 
-    }
-  };
-
-  const fetchDocuments = async () => {
-    try {
-      const res = await api.get("/api/documents");
-
-      setTotalDocuments(res.data.documents.length);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await api.get("/api/auth/me");
-        setUserData(res.data);
-      } catch (err) {
-        console.error(err);
-      }
     };
 
-    fetchUser();
-    fetchDocuments();
-  }, []);
+    const fetchDocuments = async () => {
 
-  useEffect(() => {
-    const refresh = () => {
-      fetchDocuments();
+        try {
+
+            const res = await api.get("/api/documents");
+
+            setDocuments(res.data.documents);
+
+            setTotalDocuments(res.data.documents.length);
+
+        } catch (err) {
+
+            console.error(err);
+
+        }
+
     };
 
-    window.addEventListener("documentUploaded", refresh);
+    useEffect(() => {
 
-    return () => {
-      window.removeEventListener("documentUploaded", refresh);
-    };
-  }, []);
+        fetchDocuments();
 
-  useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: "smooth",
-    });
-  }, [messages, loading]);
+    }, []);
 
-  return (
-    <div className="flex h-screen overflow-hidden font-body-md text-body-md text-on-surface">
-      {/* Sidebar khusus Chat Interface */}
-      <Sidebar />
+    useEffect(() => {
 
-      {/* Main Chat Canvas dengan Custom Grid Background */}
-      <main
-        className="flex-1 flex flex-col h-screen md:ml-[280px] relative"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, rgba(16, 185, 129, 0.05) 1px, transparent 1px),
-            linear-gradient(to bottom, rgba(16, 185, 129, 0.05) 1px, transparent 1px)
-          `,
-          backgroundSize: "40px 40px",
-        }}
-      >
-        <ChatHeader totalDocuments={totalDocuments} />
-        {/* Chat History Area */}
-        <div className="flex-1 overflow-y-auto scroll-smooth px-lg py-xl flex flex-col gap-xl custom-scrollbar">
+        const refresh = () => {
 
-          {messages.length === 0 && !loading ? (
+            fetchDocuments();
 
-            <div className="flex-1 flex flex-col justify-center items-center text-center">
+        };
 
-              <div className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6">
-                <span className="material-symbols-outlined text-primary text-5xl">
-                  auto_awesome
-                </span>
-              </div>
+        window.addEventListener(
+            "documentUploaded",
+            refresh
+        );
 
-              <h1 className="text-4xl font-bold text-on-surface mb-3">
-                Welcome to Knowledge Base AI
-              </h1>
+        return () => {
 
-              <p className="text-on-surface-variant max-w-2xl">
-                Ask anything about your uploaded documents.
-                AI will search through your knowledge base
-                and answer using relevant information.
-              </p>
+            window.removeEventListener(
+                "documentUploaded",
+                refresh
+            );
 
-              <div className="grid grid-cols-2 gap-4 mt-10 max-w-2xl w-full">
+        };
 
-                <button
-                  onClick={() => handleSend("Ringkas isi dokumen ini")}
-                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
+    }, []);
+
+    useEffect(() => {
+
+        bottomRef.current?.scrollIntoView({
+
+            behavior: "smooth",
+
+        });
+
+    }, [messages, loading]);
+
+    return (
+
+        <div className="flex h-screen overflow-hidden bg-gray-50">
+
+            <Sidebar />
+
+            <main
+                className="relative flex h-screen flex-1 flex-col overflow-hidden md:ml-[280px]"
+                style={{
+                    backgroundImage: `
+                        linear-gradient(#ececec 1px, transparent 1px),
+                        linear-gradient(90deg,#ececec 1px, transparent 1px)
+                    `,
+                    backgroundSize: "48px 48px",
+                }}
+            >
+
+
+                <div
+                    className={`flex-1 ${messages.length === 0
+                            ? "flex items-center justify-center overflow-hidden"
+                            : "overflow-y-auto"
+                        }`}
                 >
-                  📄 Ringkas isi dokumen
-                </button>
 
-                <button
-                  onClick={() => handleSend("Apa poin penting dari dokumen ini?")}
-                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
-                >
-                  ⭐ Poin penting
-                </button>
+                    {messages.length === 0 && !loading ? (
 
-                <button
-                  onClick={() => handleSend("Jelaskan isi dokumen")}
-                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
-                >
-                  💡 Jelaskan dokumen
-                </button>
+                        <div className="mx-auto flex h-full max-w-4xl flex-col items-center justify-center px-8 pb-12">
+                            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-violet-100">
 
-                <button
-                  onClick={() => handleSend("Buatkan rangkuman")}
-                  className="bg-white/5 border border-white/10 rounded-xl p-4 hover:bg-primary/10 transition"
-                >
-                  📝 Buat rangkuman
-                </button>
+                                <span className="material-symbols-outlined text-3xl text-violet-600">
+                                    auto_awesome
 
-              </div>
+                                </span>
 
-            </div>
+                            </div>
 
-          ) : (
+                            <h1 className="mt-4 text-center text-3xl font-bold tracking-tight text-gray-900">
 
-            <>
+                                Welcome to SL AI
 
-              {messages.map((message, index) => (
-                <ChatMessage
-                  key={index}
-                  type={message.type}
-                  isLast={index === messages.length - 1}
-                >
-                  {message.content}
-                </ChatMessage>
-              ))}
+                            </h1>
 
-              {loading && (
-                <ChatMessage type="ai">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce"></div>
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce delay-150"></div>
-                    <div className="w-2 h-2 rounded-full bg-emerald-400 animate-bounce delay-300"></div>
+                            <p className="mt-2 max-w-xl text-center text-sm leading-6 text-gray-500">
 
-                    <span className="text-zinc-400 ml-3">
-                      Thinking...
-                    </span>
-                  </div>
-                </ChatMessage>
-              )}
+                                Ask questions about your uploaded documents.
+                                AI will search your knowledge base and answer
+                                using the most relevant information.
 
-              <div ref={bottomRef}></div>
+                            </p>
 
-            </>
+                            <div className="mt-4 grid w-full max-w-3xl grid-cols-2 gap-3">
 
-          )}
+                                <button
+                                    onClick={() =>
+                                        handleSend("Ringkas isi dokumen ini")
+                                    }
+                                    className="rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-violet-300 hover:shadow-md"
+                                >
+
+                                    <div className="text-2xl">
+
+                                        📄
+
+                                    </div>
+
+                                    <h3 className="mt-2 text-[17px] font-semibold text-gray-900">
+
+                                        Ringkas Dokumen
+
+                                    </h3>
+
+                                    <p className="mt-1 text-[13px] leading-5 text-gray-500">
+
+                                        Buat ringkasan dari keseluruhan isi dokumen.
+
+                                    </p>
+
+                                </button>
+
+                                <button
+                                    onClick={() =>
+                                        handleSend("Apa poin penting dari dokumen ini?")
+                                    }
+                                    className="rounded-2xl border border-gray-200 bg-white p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg"
+                                >
+
+                                    <div className="text-2xl">
+
+                                        ⭐
+
+                                    </div>
+
+                                    <h3 className="mt-3 text-base font-semibold text-gray-900">
+
+                                        Poin Penting
+
+                                    </h3>
+
+                                    <p className="mt-1 text-xs leading-5 text-gray-500">
+
+                                        Temukan informasi paling penting dari dokumen.
+
+                                    </p>
+
+                                </button>
+
+                                <button
+                                    onClick={() =>
+                                        handleSend("Jelaskan isi dokumen")
+                                    }
+                                    className="rounded-2xl border border-gray-200 bg-white p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg"
+                                >
+
+                                    <div className="text-2xl">
+
+                                        💡
+
+                                    </div>
+
+                                    <h3 className="mt-3 text-base font-semibold text-gray-900">
+
+                                        Jelaskan Dokumen
+
+                                    </h3>
+
+                                    <p className="mt-1 text-xs leading-5 text-gray-500">
+
+                                        AI menjelaskan isi dokumen dengan bahasa sederhana.
+
+                                    </p>
+
+                                </button>
+
+                                <button
+                                    onClick={() =>
+                                        handleSend("Buatkan rangkuman")
+                                    }
+                                    className="rounded-2xl border border-gray-200 bg-white p-6 text-left shadow-sm transition-all hover:-translate-y-1 hover:border-violet-300 hover:shadow-lg"
+                                >
+
+                                    <div className="text-2xl">
+
+                                        📝
+
+                                    </div>
+
+                                    <h3 className="mt-3 text-base font-semibold text-gray-900">
+
+                                        Buat Rangkuman
+
+                                    </h3>
+
+                                    <p className="mt-1 text-xs leading-5 text-gray-500">
+
+                                        Ringkasan singkat yang mudah dipahami.
+
+                                    </p>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    ) : (
+                        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-8 py-8 pb-32">
+
+                            {messages.map((message, index) => (
+
+                                <ChatMessage
+                                    key={index}
+                                    type={message.type}
+                                    isLast={
+                                        index ===
+                                        messages.length - 1
+                                    }
+                                >
+
+                                    {message.content}
+
+                                </ChatMessage>
+
+                            ))}
+
+                            {loading && (
+
+                                <ChatMessage type="ai">
+
+                                    <div className="flex items-center gap-3">
+
+                                        <div className="flex gap-1">
+
+                                            <div className="h-2.5 w-2.5 animate-bounce rounded-full bg-violet-600" />
+
+                                            <div className="h-2.5 w-2.5 animate-bounce rounded-full bg-violet-600 [animation-delay:150ms]" />
+
+                                            <div className="h-2.5 w-2.5 animate-bounce rounded-full bg-violet-600 [animation-delay:300ms]" />
+
+                                        </div>
+
+                                        <span className="text-sm text-gray-500">
+
+                                            SL AI is thinking...
+
+                                        </span>
+
+                                    </div>
+
+                                </ChatMessage>
+
+                            )}
+
+                           <div
+    ref={bottomRef}
+    className="h-40 shrink-0"
+/>
+
+                        </div>
+
+                    )}
+
+                </div>
+
+                <ChatInput
+                    onSend={handleSend}
+                    documents={documents}
+                    selectedDocument={selectedDocument}
+                    setSelectedDocument={setSelectedDocument}
+                />
+
+            </main>
 
         </div>
 
-        <ChatInput onSend={handleSend} />
-      </main>
-    </div>
-  );
+    );
+
 }
